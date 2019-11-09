@@ -88,6 +88,3 @@ endif
 obj-$(CONFIG_QRTR)		+= qrtr/
 obj-$(CONFIG_NET_NCSI)		+= ncsi/
 obj-$(CONFIG_RMNET_DATA) += rmnet_data/
-# KNOX NPA - START
-obj-$(CONFIG_KNOX_NCM)	+= ncm/
-# KNOX NPA - END

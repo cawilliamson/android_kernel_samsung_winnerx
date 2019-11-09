@@ -152,23 +152,6 @@ int sec_debug_msg_log(void *caller, const char *fmt, ...);
 #define secdbg_msg(fmt, ...)
 #endif /* CONFIG_SEC_DEBUG_MSG_LOG */
 
-/* KNOX_SEANDROID_START */
-#ifdef CONFIG_SEC_DEBUG_AVC_LOG
-#define AVC_LOG_MAX			256
-struct secavc_log {
-	char msg[256];
-};
-
-int sec_debug_avc_log(const char *fmt, ...);
-
-#define secdbg_avc(fmt, ...) \
-	sec_debug_avc_log(fmt, ##__VA_ARGS__)
-#else /* CONFIG_SEC_DEBUG_AVC_LOG */
-#define sec_debug_avc_log(fmt, ...)
-#define secdbg_avc(fmt, ...)
-#endif /* CONFIG_SEC_DEBUG_AVC_LOG */
-/* KNOX_SEANDROID_END */
-
 #ifdef CONFIG_SEC_DEBUG_DCVS_LOG
 #define DCVS_LOG_MAX			256
 
