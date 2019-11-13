@@ -1929,7 +1929,7 @@ unsigned int cpufreq_driver_fast_switch(struct cpufreq_policy *policy,
 
 	cpufreq_times_record_transition(policy, target_freq);
 
-	if (next_freq && unlikely(cpufreq_stats_on_check(policy)))
+	if (next_freq)
 		cpufreq_stats_record_transition(policy, next_freq);
 
 	return next_freq;
