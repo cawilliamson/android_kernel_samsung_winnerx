@@ -754,8 +754,8 @@ static ssize_t show_extra_info(struct device *dev,
 	unsigned long long rem_nsec;
 	unsigned long long ts_nsec;
 	unsigned int reset_reason;
-	rst_exinfo_t *p_rst_exinfo = NULL;
 #ifdef CONFIG_SEC_DEBUG
+	rst_exinfo_t *p_rst_exinfo = NULL;
 	_kern_ex_info_t *p_kinfo = NULL;
 #endif
 	int cpu = -1;
@@ -769,27 +769,23 @@ static ssize_t show_extra_info(struct device *dev,
 	reset_reason = sec_debug_get_reset_reason();
 	if (!__is_valid_reset_reason(reset_reason))
 		goto out;
-#endif
 
 	p_rst_exinfo = kmalloc(sizeof(rst_exinfo_t), GFP_KERNEL);
 	if (!p_rst_exinfo)
 		goto out;
 
-#ifdef CONFIG_SEC_DEBUG
 	if (!read_debug_partition(debug_index_reset_ex_info, p_rst_exinfo)) {
 		pr_err("fail - get param!!\n");
 		goto out;
 	}
-#endif
+
 	p_kinfo = &p_rst_exinfo->kern_ex_info.info;
 	cpu = p_kinfo->cpu;
 
-#ifdef CONFIG_SEC_DEBUG
 	offset += scnprintf((char*)(buf + offset), EXTRA_LEN_STR - offset,
 			"\"RR\":\"%s\",", sec_debug_get_reset_reason_str(reset_reason));
 	offset += scnprintf((char*)(buf + offset), EXTRA_LEN_STR - offset,
 			"\"RWC\":\"%d\",", sec_debug_get_reset_write_cnt());
-#endif
 
 	ts_nsec = p_kinfo->ktime;
 	rem_nsec = do_div(ts_nsec, 1000000000ULL);
@@ -839,7 +835,7 @@ static ssize_t show_extra_info(struct device *dev,
 		offset += scnprintf((char*)(buf + offset), EXTRA_LEN_STR - offset,
 				"\"BDES\":\"%s\",", p_kinfo->badmode.esr_str);
 	}
-
+#endif
 	if ((cpu > -1) && (cpu < num_present_cpus())) {
 		if (p_kinfo->fault[cpu].esr) {
 			offset += scnprintf((char*)(buf + offset), EXTRA_LEN_STR - offset,
@@ -866,6 +862,7 @@ static ssize_t show_extra_info(struct device *dev,
 				p_kinfo->fault[cpu].pte[5]);
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	offset += scnprintf((char*)(buf + offset), EXTRA_LEN_STR - offset,
 			"\"BUG\":\"%s\",", p_kinfo->bug_buf);
 	offset += scnprintf((char*)(buf + offset), EXTRA_LEN_STR - offset,
@@ -880,6 +877,7 @@ static ssize_t show_extra_info(struct device *dev,
 			"\"ROT\":\"W%dC%d\",", get_param0(4), get_param0(5));
 	offset += scnprintf((char*)(buf + offset), EXTRA_LEN_STR - offset,
 			"\"STACK\":\"%s\"", p_kinfo->backtrace);
+#endif
 
 out:
 	if (p_rst_exinfo)
