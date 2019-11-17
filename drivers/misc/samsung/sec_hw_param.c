@@ -876,17 +876,16 @@ static ssize_t show_extra_info(struct device *dev,
 			"\"ROT\":\"W%dC%d\",", get_param0(4), get_param0(5));
 	offset += scnprintf((char*)(buf + offset), EXTRA_LEN_STR - offset,
 			"\"STACK\":\"%s\"", p_kinfo->backtrace);
-#endif
+
 
 out:
-#ifdef CONFIG_SEC_DEBUG
 	if (p_rst_exinfo)
 		kfree(p_rst_exinfo);
-#endif
 
 	check_format(buf, &offset, EXTRA_LEN_STR);
 
 	return offset;
+#endif
 }
 static DEVICE_ATTR(extra_info, 0440, show_extra_info, NULL);
 
