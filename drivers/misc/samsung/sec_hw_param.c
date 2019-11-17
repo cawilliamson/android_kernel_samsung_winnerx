@@ -135,9 +135,9 @@ static void clean_batt_info(void)
 
 void battery_last_dcvs(int cap, int volt, int temp, int curr)
 {
+#ifdef CONFIG_SEC_DEBUG
 	uint32_t tail = 0;
 
-#ifdef CONFIG_SEC_DEBUG
 	if (phealth == NULL || !batt_info_cleaned)
 		return;
 
