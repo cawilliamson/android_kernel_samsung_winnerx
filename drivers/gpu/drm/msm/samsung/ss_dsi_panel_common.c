@@ -365,7 +365,9 @@ static void ss_check_te(struct samsung_display_driver_data *vdd)
 		}
 		if (te_count == te_max) {
 			LCD_ERR("LDI doesn't generate TE");
+#ifdef CONFIG_SEC_DEBUG
 			SS_XLOG(0xbad);
+#endif
 			inc_dpui_u32_field(DPUI_KEY_QCT_NO_TE, 1);
 		}
 	} else
@@ -1817,6 +1819,7 @@ int ss_panel_on_pre(struct samsung_display_driver_data *vdd)
 
 	/* Read panel status to check panel is ok from bootloader */
 	if (!vdd->read_panel_status_from_lk) {
+#ifdef CONFIG_SEC_DEBUG
 		rddpm = ss_read_rddpm(vdd);
 		rddsm = ss_read_rddsm(vdd);
 		errfg = ss_read_errfg(vdd);
@@ -1824,6 +1827,7 @@ int ss_panel_on_pre(struct samsung_display_driver_data *vdd)
 		ss_read_pps_data(vdd);
 
 		SS_XLOG(rddpm, rddsm, errfg, dsierror);
+#endif
 		LCD_INFO("panel dbg: %x %x %x %x\n", rddpm, rddsm, errfg, dsierror);
 
 		vdd->read_panel_status_from_lk = 1;
@@ -2070,12 +2074,14 @@ int ss_panel_off_pre(struct samsung_display_driver_data *vdd)
 	int ret = 0;
 
 	LCD_INFO("+\n");
+#ifdef CONFIG_SEC_DEBUG
 	rddpm = ss_read_rddpm(vdd);
 	rddsm = ss_read_rddsm(vdd);
 	errfg = ss_read_errfg(vdd);
 	dsierror = ss_read_dsierr(vdd);
 	ss_read_pps_data(vdd);
 	SS_XLOG(rddpm, rddsm, errfg, dsierror);
+#ifdef CONFIG_SEC_DEBUG
 	LCD_INFO("panel dbg: %x %x %x %x\n", rddpm, rddsm, errfg, dsierror);
 
 	if (ss_is_esd_check_enabled(vdd)) {
