@@ -137,14 +137,13 @@ void battery_last_dcvs(int cap, int volt, int temp, int curr)
 {
 	uint32_t tail = 0;
 
+#ifdef CONFIG_SEC_DEBUG
 	if (phealth == NULL || !batt_info_cleaned)
 		return;
 
-#ifdef CONFIG_SEC_DEBUG
 	if ((phealth->battery.tail & 0xf) >= MAX_BATT_DCVS) {
 		phealth->battery.tail = 0x10;
 	}
-#endif
 
 	tail = phealth->battery.tail & 0xf;
 
@@ -155,6 +154,7 @@ void battery_last_dcvs(int cap, int volt, int temp, int curr)
 	phealth->battery.batt[tail].curr = curr;
 
 	phealth->battery.tail++;
+#endif
 }
 EXPORT_SYMBOL(battery_last_dcvs);
 
@@ -168,6 +168,7 @@ static ssize_t show_last_dcvs(struct device *dev,
 #endif
 	size_t i;
 
+#ifdef CONFIG_SEC_DEBUG
 	if (!phealth)
 		phealth = ap_health_data_read();
 
@@ -176,7 +177,6 @@ static ssize_t show_last_dcvs(struct device *dev,
 		return info_size;
 	}
 
-#ifdef CONFIG_SEC_DEBUG
 	reset_reason = sec_debug_get_reset_reason();
 	if (!__is_valid_reset_reason(reset_reason))
 		return info_size;
@@ -190,7 +190,6 @@ static ssize_t show_last_dcvs(struct device *dev,
 		sysfs_scnprintf(buf, info_size, "\"%sKHz\":\"%u\",", prefix[i],
 				phealth->last_dcvs.apps[i].cpu_KHz);
 	}
-#endif
 
 	sysfs_scnprintf(buf, info_size, "\"DDRKHz\":\"%u\",",
 			phealth->last_dcvs.rpm.ddr_KHz);
@@ -208,6 +207,7 @@ static ssize_t show_last_dcvs(struct device *dev,
 			phealth->last_dcvs.pon.pon_reason);
 	sysfs_scnprintf(buf, info_size, "\"PONF\":\"%llx\",",
 			phealth->last_dcvs.pon.fault_reason);
+#endif
 
 	// remove , character
 	info_size--;
@@ -241,13 +241,13 @@ static ssize_t store_ap_health(struct device *dev,
 	}
 
 	pr_info("clear ap_health_data by HQM %zu\n", sizeof(ap_health_t));
-#endif
 	/*++ add here need init data by HQM ++*/
 	memset(&(phealth->daily_rr), 0, sizeof(reset_reason_t));
 	memset(&(phealth->daily_cache), 0, sizeof(cache_health_t));
 	memset(&(phealth->daily_pcie), 0, sizeof(pcie_health_t) * MAX_PCIE_NUM);
 
 	ap_health_data_write(phealth);
+#endif
 
 	return count;
 }
@@ -271,9 +271,10 @@ static ssize_t show_ap_health(struct device *dev,
 
 	sysfs_scnprintf(buf, info_size, "\"L1c\":\"");
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
+#ifdef CONFIG_SEC_DEBUG
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->cache.edac[cpu][0].ce_cnt);
-
+#endif
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
 		else
@@ -282,8 +283,10 @@ static ssize_t show_ap_health(struct device *dev,
 
 	sysfs_scnprintf(buf, info_size, "\"L1u\":\"");
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
+#ifdef CONFIG_SEC_DEBUG
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->cache.edac[cpu][0].ue_cnt);
+#endif
 
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
@@ -293,8 +296,10 @@ static ssize_t show_ap_health(struct device *dev,
 
 	sysfs_scnprintf(buf, info_size, "\"L2c\":\"");
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
+#ifdef CONFIG_SEC_DEBUG
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->cache.edac[cpu][1].ce_cnt);
+#endif
 
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
@@ -304,8 +309,10 @@ static ssize_t show_ap_health(struct device *dev,
 
 	sysfs_scnprintf(buf, info_size, "\"L2u\":\"");
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
+#ifdef CONFIG_SEC_DEBUG
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->cache.edac[cpu][1].ue_cnt);
+#endif
 
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
@@ -313,17 +320,21 @@ static ssize_t show_ap_health(struct device *dev,
 			sysfs_scnprintf(buf, info_size, ",");
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	sysfs_scnprintf(buf, info_size, "\"L3c\":\"%d\",",
 			phealth->cache.edac_l3.ce_cnt);
 	sysfs_scnprintf(buf, info_size,	"\"L3u\":\"%d\",",
 			phealth->cache.edac_l3.ue_cnt);
 	sysfs_scnprintf(buf, info_size,	"\"EDB\":\"%d\",",
 			phealth->cache.edac_bus_cnt);
+#endif
 
 	sysfs_scnprintf(buf, info_size, "\"dL1c\":\"");
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
+#ifdef CONFIG_SEC_DEBUG
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->daily_cache.edac[cpu][0].ce_cnt);
+#endif
 
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
@@ -333,8 +344,10 @@ static ssize_t show_ap_health(struct device *dev,
 
 	sysfs_scnprintf(buf, info_size, "\"dL1u\":\"");
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
+#ifdef CONFIG_SEC_DEBUG
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->daily_cache.edac[cpu][0].ue_cnt);
+#endif
 
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
