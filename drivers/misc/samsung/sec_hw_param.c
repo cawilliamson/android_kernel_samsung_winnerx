@@ -255,9 +255,9 @@ static ssize_t show_ap_health(struct device *dev,
 {
 	ssize_t info_size = 0;
 	int cpu;
+#ifdef CONFIG_SEC_DEBUG
 	size_t i;
 
-#ifdef CONFIG_SEC_DEBUG
 	if (!phealth)
 		phealth = ap_health_data_read();
 
