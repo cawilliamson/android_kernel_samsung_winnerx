@@ -835,7 +835,7 @@ static ssize_t show_extra_info(struct device *dev,
 		offset += scnprintf((char*)(buf + offset), EXTRA_LEN_STR - offset,
 				"\"BDES\":\"%s\",", p_kinfo->badmode.esr_str);
 	}
-#endif
+
 	if ((cpu > -1) && (cpu < num_present_cpus())) {
 		if (p_kinfo->fault[cpu].esr) {
 			offset += scnprintf((char*)(buf + offset), EXTRA_LEN_STR - offset,
@@ -862,7 +862,6 @@ static ssize_t show_extra_info(struct device *dev,
 				p_kinfo->fault[cpu].pte[5]);
 	}
 
-#ifdef CONFIG_SEC_DEBUG
 	offset += scnprintf((char*)(buf + offset), EXTRA_LEN_STR - offset,
 			"\"BUG\":\"%s\",", p_kinfo->bug_buf);
 	offset += scnprintf((char*)(buf + offset), EXTRA_LEN_STR - offset,
@@ -880,8 +879,10 @@ static ssize_t show_extra_info(struct device *dev,
 #endif
 
 out:
+#ifdef CONFIG_SEC_DEBUG
 	if (p_rst_exinfo)
 		kfree(p_rst_exinfo);
+#endif
 
 	check_format(buf, &offset, EXTRA_LEN_STR);
 
@@ -899,10 +900,10 @@ static ssize_t show_extrb_info(struct device *dev,
 	unsigned int reset_reason;
 	char *tz_cpu_status[6] = { "NA", "R", "PC", "WB", "IW", "IWT" };
 
+#ifdef CONFIG_SEC_DEBUG
 	rst_exinfo_t *p_rst_exinfo = NULL;
 	__rpm_log_t *pRPMlog = NULL;
 
-#ifdef CONFIG_SEC_DEBUG
 	if (!__is_ready_debug_reset_header()) {
 		pr_info("updated nothing.\n");
 		goto out;
@@ -911,7 +912,6 @@ static ssize_t show_extrb_info(struct device *dev,
 	reset_reason = sec_debug_get_reset_reason();
 	if (!__is_valid_reset_reason(reset_reason))
 		goto out;
-#endif
 
 	p_rst_exinfo = kmalloc(sizeof(rst_exinfo_t), GFP_KERNEL);
 	if (!p_rst_exinfo) {
@@ -919,7 +919,6 @@ static ssize_t show_extrb_info(struct device *dev,
 		goto out;
 	}
 
-#ifdef CONFIG_SEC_DEBUG
 	if (!read_debug_partition(debug_index_reset_ex_info, p_rst_exinfo)) {
 		pr_err("%s : fail - get param!!\n", __func__);
 		goto out;
