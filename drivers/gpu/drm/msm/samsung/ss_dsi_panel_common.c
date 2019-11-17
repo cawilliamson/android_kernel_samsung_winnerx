@@ -5174,11 +5174,13 @@ void ss_panel_init(struct dsi_panel *panel)
 	vdd->msm_private = panel;
 	list_add(&vdd->vdd_list, &vdds_list);
 
+#ifdef CONFIG_SEC_DEBUG
 	if (ss_panel_debug_init(vdd))
 		LCD_ERR("Fail to create debugfs\n");
 
 	if (ss_smmu_debug_init(vdd))
 		LCD_ERR("Fail to create smmu debug\n");
+#endif
 
 	mutex_init(&vdd->vdd_lock);
 	mutex_init(&vdd->cmd_lock);
