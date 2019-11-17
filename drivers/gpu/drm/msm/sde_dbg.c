@@ -4015,7 +4015,7 @@ static void _sde_dump_array(struct sde_dbg_reg_base *blk_arr[],
 		dsi_ctrl_debug_dump(sde_dbg_base.dbgbus_dsi.entries,
 				    sde_dbg_base.dbgbus_dsi.size);
 
-#if defined(CONFIG_DISPLAY_SAMSUNG)
+#if defined(CONFIG_DISPLAY_SAMSUNG) && defined(CONFIG_SEC_DEBUG)
 	if (do_panic && sde_dbg_base.panic_on_err)
 		ss_store_xlog_panic_dbg();
 #endif
