@@ -756,8 +756,8 @@ static ssize_t show_extra_info(struct device *dev,
 	unsigned int reset_reason;
 #ifdef CONFIG_SEC_DEBUG
 	rst_exinfo_t *p_rst_exinfo = NULL;
-#endif
 	_kern_ex_info_t *p_kinfo = NULL;
+#endif
 	int cpu = -1;
 
 #ifdef CONFIG_SEC_DEBUG
