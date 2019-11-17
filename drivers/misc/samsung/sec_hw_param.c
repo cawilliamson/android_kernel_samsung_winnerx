@@ -33,9 +33,11 @@
 
 #include <linux/sec_smem.h>
 #include <linux/sec_class.h>
+#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
 #include <linux/sec_debug_user_reset.h>
 #include <linux/sec_debug_partition.h>
+#endif
 #include <linux/sec_hw_param.h>
 
 static unsigned int system_rev __read_mostly;
@@ -92,7 +94,7 @@ static void check_format(char *buf, ssize_t *size, int max_len_str)
 		}
 	}
 }
-
+#ifdef CONFIG_SEC_DEBUG
 static bool __is_ready_debug_reset_header(void)
 {
 	struct debug_reset_header *header = get_debug_reset_header();
@@ -103,6 +105,7 @@ static bool __is_ready_debug_reset_header(void)
 	kfree(header);
 	return true;
 }
+#endif
 
 static bool __is_valid_reset_reason(unsigned int reset_reason)
 {
@@ -167,14 +170,18 @@ static ssize_t show_last_dcvs(struct device *dev,
 		return info_size;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	reset_reason = sec_debug_get_reset_reason();
 	if (!__is_valid_reset_reason(reset_reason))
+#endif
 		return info_size;
 
+#ifdef CONFIG_SEC_DEBUG
 	sysfs_scnprintf(buf, info_size, "\"RR\":\"%s\",",
 			sec_debug_get_reset_reason_str(reset_reason));
 	sysfs_scnprintf(buf, info_size, "\"RWC\":\"%d\",",
 			sec_debug_get_reset_write_cnt());
+#endif
 
 	for (i = 0; i < MAX_CLUSTER_NUM; i++) {
 		sysfs_scnprintf(buf, info_size, "\"%sKHz\":\"%u\",", prefix[i],
@@ -729,25 +736,31 @@ static ssize_t show_extra_info(struct device *dev,
 		goto out;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	reset_reason = sec_debug_get_reset_reason();
 	if (!__is_valid_reset_reason(reset_reason))
 		goto out;
+#endif
 
 	p_rst_exinfo = kmalloc(sizeof(rst_exinfo_t), GFP_KERNEL);
 	if (!p_rst_exinfo)
 		goto out;
 
+#ifdef CONFIG_SEC_DEBUG
 	if (!read_debug_partition(debug_index_reset_ex_info, p_rst_exinfo)) {
 		pr_err("fail - get param!!\n");
 		goto out;
 	}
+#endif
 	p_kinfo = &p_rst_exinfo->kern_ex_info.info;
 	cpu = p_kinfo->cpu;
 
+#ifdef CONFIG_SEC_DEBUG
 	offset += scnprintf((char*)(buf + offset), EXTRA_LEN_STR - offset,
 			"\"RR\":\"%s\",", sec_debug_get_reset_reason_str(reset_reason));
 	offset += scnprintf((char*)(buf + offset), EXTRA_LEN_STR - offset,
 			"\"RWC\":\"%d\",", sec_debug_get_reset_write_cnt());
+#endif
 
 	ts_nsec = p_kinfo->ktime;
 	rem_nsec = do_div(ts_nsec, 1000000000ULL);
@@ -867,9 +880,11 @@ static ssize_t show_extrb_info(struct device *dev,
 		goto out;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	reset_reason = sec_debug_get_reset_reason();
 	if (!__is_valid_reset_reason(reset_reason))
 		goto out;
+#endif
 
 	p_rst_exinfo = kmalloc(sizeof(rst_exinfo_t), GFP_KERNEL);
 	if (!p_rst_exinfo) {
@@ -882,11 +897,13 @@ static ssize_t show_extrb_info(struct device *dev,
 		goto out;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	offset += scnprintf((char*)(buf + offset), SPECIAL_LEN_STR - offset,
 			"\"RR\":\"%s\",", sec_debug_get_reset_reason_str(reset_reason));
 
 	offset += scnprintf((char*)(buf + offset), SPECIAL_LEN_STR - offset,
 			"\"RWC\":\"%d\",", sec_debug_get_reset_write_cnt());
+#endif
 
 	if (p_rst_exinfo->rpm_ex_info.info.magic == RPM_EX_INFO_MAGIC
 		 && p_rst_exinfo->rpm_ex_info.info.nlog > 0) {
@@ -1020,6 +1037,7 @@ static ssize_t show_extrc_info(struct device *dev,
 		goto out;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	reset_reason = sec_debug_get_reset_reason();
 	if (!__is_valid_reset_reason(reset_reason))
 		goto out;
@@ -1040,7 +1058,7 @@ static ssize_t show_extrc_info(struct device *dev,
 
 	offset += scnprintf((char*)(buf + offset), SPECIAL_LEN_STR - offset,
 			"\"RWC\":\"%d\",", sec_debug_get_reset_write_cnt());
-	
+
 	for(i = 0; i < SEC_DEBUG_RESET_EXTRC_SIZE; i++) { // check " character and then change ' character
 		if (extrc_buf[i] == '"')
 			extrc_buf[i] = '\'';
@@ -1049,6 +1067,7 @@ static ssize_t show_extrc_info(struct device *dev,
 	}
 
 	extrc_buf[SEC_DEBUG_RESET_EXTRC_SIZE-1] = '\0';
+#endif
 
 	offset += scnprintf((char*)(buf + offset), SPECIAL_LEN_STR - offset,
 			"\"LKL\":\"%s\"", &extrc_buf[offset]);
@@ -1076,6 +1095,7 @@ static ssize_t show_extrt_info(struct device *dev,
 		goto out;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	reset_reason = sec_debug_get_reset_reason();
 	if (!__is_valid_reset_reason(reset_reason))
 		goto out;
@@ -1096,7 +1116,7 @@ static ssize_t show_extrt_info(struct device *dev,
 
 	offset += scnprintf((char*)(buf + offset), SPECIAL_LEN_STR - offset,
 			"\"RWC\":\"%d\",", sec_debug_get_reset_write_cnt());
-
+#endif
 	if (tz_diag_info->magic_num != TZ_DIAG_LOG_MAGIC) {
 		offset += scnprintf((char*)(buf + offset), SPECIAL_LEN_STR - offset,
 				"\"ERR\":\"tzlog magic num error\"");
@@ -1194,10 +1214,11 @@ static int sec_errp_extra_show(struct seq_file *m, void *v)
 		goto out;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	reset_reason = sec_debug_get_reset_reason();
 	if (!__is_valid_reset_reason(reset_reason))
 		goto out;
-
+#endif
 	if (reset_reason == USER_UPLOAD_CAUSE_SMPL)
 		goto out;
 
@@ -1212,10 +1233,13 @@ static int sec_errp_extra_show(struct seq_file *m, void *v)
 	p_kinfo = &p_rst_exinfo->kern_ex_info.info;
 	cpu = p_kinfo->cpu;
 
+#ifdef CONFIG_SEC_DEBUG
 	offset += scnprintf((char*)(buf + offset), EXTEND_RR_SIZE - offset,
 			"RWC:%d", sec_debug_get_reset_write_cnt());
 
 	sec_debug_upload_cause_str(p_kinfo->upload_cause, upload_cause_str);
+#endif
+
 	offset += scnprintf((char*)(buf + offset), EXTEND_RR_SIZE - offset,
 			" UPLOAD:%s_0x%x", upload_cause_str, p_kinfo->upload_cause);
 
