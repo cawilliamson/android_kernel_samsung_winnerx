@@ -1216,9 +1216,10 @@ struct samsung_display_driver_data {
 	/*
 	 *  smmu debug(sde & rotator)
 	 */
+#ifdef CONFIG_SEC_DEBUG
 	struct ss_smmu_debug ss_debug_smmu[SMMU_MAX_DEBUG]; // TODO: use ss_debug_smmu for only primary vdd, not secondary vdd...
 	struct kmem_cache *ss_debug_smmu_cache;
-
+#endif
 	/*
 	 *  SELF DISPLAY
 	 */
