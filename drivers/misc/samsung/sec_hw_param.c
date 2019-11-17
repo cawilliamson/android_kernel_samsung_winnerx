@@ -747,10 +747,10 @@ static ssize_t show_ap_info(struct device *dev,
 }
 static DEVICE_ATTR(ap_info, 0440, show_ap_info, NULL);
 
+#ifdef CONFIG_SEC_DEBUG
 static ssize_t show_extra_info(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
-#ifdef CONFIG_SEC_DEBUG
 	ssize_t offset = 0;
 	unsigned long long rem_nsec;
 	unsigned long long ts_nsec;
@@ -884,7 +884,6 @@ out:
 	check_format(buf, &offset, EXTRA_LEN_STR);
 
 	return offset;
-#endif
 }
 static DEVICE_ATTR(extra_info, 0440, show_extra_info, NULL);
 
@@ -898,7 +897,6 @@ static ssize_t show_extrb_info(struct device *dev,
 	unsigned int reset_reason;
 	char *tz_cpu_status[6] = { "NA", "R", "PC", "WB", "IW", "IWT" };
 
-#ifdef CONFIG_SEC_DEBUG
 	rst_exinfo_t *p_rst_exinfo = NULL;
 	__rpm_log_t *pRPMlog = NULL;
 
@@ -927,7 +925,6 @@ static ssize_t show_extrb_info(struct device *dev,
 
 	offset += scnprintf((char*)(buf + offset), SPECIAL_LEN_STR - offset,
 			"\"RWC\":\"%d\",", sec_debug_get_reset_write_cnt());
-#endif
 
 	if (p_rst_exinfo->rpm_ex_info.info.magic == RPM_EX_INFO_MAGIC
 		 && p_rst_exinfo->rpm_ex_info.info.nlog > 0) {
@@ -1056,7 +1053,6 @@ static ssize_t show_extrc_info(struct device *dev,
 	unsigned int i = 0;
 	char *extrc_buf = NULL;
 
-#ifdef CONFIG_SEC_DEBUG
 	if (!__is_ready_debug_reset_header()) {
 		pr_info("updated nothing.\n");
 		goto out;
@@ -1091,7 +1087,6 @@ static ssize_t show_extrc_info(struct device *dev,
 	}
 
 	extrc_buf[SEC_DEBUG_RESET_EXTRC_SIZE-1] = '\0';
-#endif
 
 	offset += scnprintf((char*)(buf + offset), SPECIAL_LEN_STR - offset,
 			"\"LKL\":\"%s\"", &extrc_buf[offset]);
@@ -1114,7 +1109,6 @@ static ssize_t show_extrt_info(struct device *dev,
 	struct tzdbg_t *tz_diag_info = NULL;
 	unsigned int i = 0;
 
-#ifdef CONFIG_SEC_DEBUG
 	if (!__is_ready_debug_reset_header()) {
 		pr_info("updated nothing.\n");
 		goto out;
@@ -1140,7 +1134,6 @@ static ssize_t show_extrt_info(struct device *dev,
 
 	offset += scnprintf((char*)(buf + offset), SPECIAL_LEN_STR - offset,
 			"\"RWC\":\"%d\",", sec_debug_get_reset_write_cnt());
-#endif
 
 	if (tz_diag_info->magic_num != TZ_DIAG_LOG_MAGIC) {
 		offset += scnprintf((char*)(buf + offset), SPECIAL_LEN_STR - offset,
@@ -1193,9 +1186,7 @@ static int sec_hw_param_dbg_part_notifier_callback(
 {
 	switch (action) {
 	case DBG_PART_DRV_INIT_DONE:
-#ifdef CONFIG_SEC_DEBUG
 		phealth = ap_health_data_read();
-#endif
 		clean_batt_info();
 		break;
 	default:
@@ -1204,6 +1195,7 @@ static int sec_hw_param_dbg_part_notifier_callback(
 
 	return NOTIFY_OK;
 }
+#endif
 
 static struct attribute *sec_hw_param_attributes[] = {
 	&dev_attr_ap_info.attr,
