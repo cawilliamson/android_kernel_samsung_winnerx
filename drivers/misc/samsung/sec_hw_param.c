@@ -1206,10 +1206,12 @@ static struct attribute *sec_hw_param_attributes[] = {
 	&dev_attr_eye_dcc_info.attr,
 	&dev_attr_ap_health.attr,
 	&dev_attr_last_dcvs.attr,
+#ifdef CONFIG_SEC_DEBUG
 	&dev_attr_extra_info.attr,
 	&dev_attr_extrb_info.attr,
 	&dev_attr_extrc_info.attr,
 	&dev_attr_extrt_info.attr,
+#endif
 	NULL,
 };
 
