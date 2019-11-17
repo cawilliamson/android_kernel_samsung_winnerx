@@ -69,7 +69,9 @@ Copyright (C) 2012, Samsung Electronics. All rights reserved.
 #include "ss_dpui_common.h"
 
 #include "ss_dsi_panel_sysfs.h"
+#ifdef CONFIG_SEC_DEBUG
 #include "ss_dsi_panel_debug.h"
+#endif
 
 #include "ss_ddi_poc_common.h"
 #include "ss_copr_common.h"
