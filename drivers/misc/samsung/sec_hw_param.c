@@ -355,8 +355,10 @@ static ssize_t show_ap_health(struct device *dev,
 
 	sysfs_scnprintf(buf, info_size, "\"dL2c\":\"");
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
+#ifdef CONFIG_SEC_DEBUG
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->daily_cache.edac[cpu][1].ce_cnt);
+#endif
 
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
@@ -366,8 +368,10 @@ static ssize_t show_ap_health(struct device *dev,
 
 	sysfs_scnprintf(buf, info_size, "\"dL2u\":\"");
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
+#ifdef CONFIG_SEC_DEBUG
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->daily_cache.edac[cpu][1].ue_cnt);
+#endif
 
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
@@ -375,6 +379,7 @@ static ssize_t show_ap_health(struct device *dev,
 			sysfs_scnprintf(buf, info_size, ",");
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	sysfs_scnprintf(buf, info_size, "\"dL3c\":\"%d\",",
 			phealth->daily_cache.edac_l3.ce_cnt);
 	sysfs_scnprintf(buf, info_size,	"\"dL3u\":\"%d\",",
@@ -382,7 +387,6 @@ static ssize_t show_ap_health(struct device *dev,
 	sysfs_scnprintf(buf, info_size,	"\"dEDB\":\"%d\",",
 			phealth->daily_cache.edac_bus_cnt);
 
-#ifdef CONFIG_SEC_DEBUG
 	for (i = 0; i < MAX_PCIE_NUM; i++) {
 		sysfs_scnprintf(buf, info_size, "\"P%zuPF\":\"%d\",", i,
 				phealth->pcie[i].phy_init_fail_cnt);
@@ -402,7 +406,6 @@ static ssize_t show_ap_health(struct device *dev,
 		sysfs_scnprintf(buf, info_size, "\"dP%zuLT\":\"%x\",", i,
 				phealth->daily_pcie[i].link_up_fail_ltssm);
 	}
-#endif
 
 	sysfs_scnprintf(buf, info_size, "\"dNP\":\"%d\",",
 			phealth->daily_rr.np);
@@ -422,6 +425,7 @@ static ssize_t show_ap_health(struct device *dev,
 			phealth->daily_rr.sp);
 	sysfs_scnprintf(buf, info_size, "\"dPP\":\"%d\"",
 			phealth->daily_rr.pp);
+#endif
 
 	check_format(buf, &info_size, DEFAULT_LEN_STR);
 
@@ -1194,7 +1198,9 @@ static int sec_hw_param_dbg_part_notifier_callback(
 {
 	switch (action) {
 	case DBG_PART_DRV_INIT_DONE:
+#ifdef CONFIG_SEC_DEBUG
 		phealth = ap_health_data_read();
+#endif
 		clean_batt_info();
 		break;
 	default:

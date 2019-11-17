@@ -341,7 +341,9 @@ int ss_spi_init(struct samsung_display_driver_data *vdd)
 	if (ret)
 		LCD_ERR("%s : ddi spi register fail : %d\n", __func__, ret);
 
+#ifdef CONFIG_SEC_DEBUG
 	register_reboot_notifier(&vdd->spi_notif);
+#endif
 
 	LCD_ERR("%s : --\n", __func__);
 	return ret;
