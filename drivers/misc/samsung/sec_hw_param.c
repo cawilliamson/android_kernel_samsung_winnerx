@@ -165,10 +165,8 @@ static ssize_t show_last_dcvs(struct device *dev,
 	unsigned int reset_reason;
 #ifdef CONFIG_SEC_DEBUG
 	char *prefix[MAX_CLUSTER_NUM] = {"L3", "SC", "GC"};
-#endif
 	size_t i;
 
-#ifdef CONFIG_SEC_DEBUG
 	if (!phealth)
 		phealth = ap_health_data_read();
 

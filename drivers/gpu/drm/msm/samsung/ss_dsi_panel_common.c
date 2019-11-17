@@ -2081,7 +2081,7 @@ int ss_panel_off_pre(struct samsung_display_driver_data *vdd)
 	dsierror = ss_read_dsierr(vdd);
 	ss_read_pps_data(vdd);
 	SS_XLOG(rddpm, rddsm, errfg, dsierror);
-#ifdef CONFIG_SEC_DEBUG
+#endif
 	LCD_INFO("panel dbg: %x %x %x %x\n", rddpm, rddsm, errfg, dsierror);
 
 	if (ss_is_esd_check_enabled(vdd)) {
