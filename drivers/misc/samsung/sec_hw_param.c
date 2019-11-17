@@ -750,17 +750,16 @@ static DEVICE_ATTR(ap_info, 0440, show_ap_info, NULL);
 static ssize_t show_extra_info(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
+#ifdef CONFIG_SEC_DEBUG
 	ssize_t offset = 0;
 	unsigned long long rem_nsec;
 	unsigned long long ts_nsec;
 	unsigned int reset_reason;
-#ifdef CONFIG_SEC_DEBUG
 	rst_exinfo_t *p_rst_exinfo = NULL;
 	_kern_ex_info_t *p_kinfo = NULL;
-#endif
+
 	int cpu = -1;
 
-#ifdef CONFIG_SEC_DEBUG
 	if (!__is_ready_debug_reset_header()) {
 		pr_info("updated nothing.\n");
 		goto out;
