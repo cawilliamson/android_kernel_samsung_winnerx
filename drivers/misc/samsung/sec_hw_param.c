@@ -173,10 +173,8 @@ static ssize_t show_last_dcvs(struct device *dev,
 #ifdef CONFIG_SEC_DEBUG
 	reset_reason = sec_debug_get_reset_reason();
 	if (!__is_valid_reset_reason(reset_reason))
-#endif
 		return info_size;
 
-#ifdef CONFIG_SEC_DEBUG
 	sysfs_scnprintf(buf, info_size, "\"RR\":\"%s\",",
 			sec_debug_get_reset_reason_str(reset_reason));
 	sysfs_scnprintf(buf, info_size, "\"RWC\":\"%d\",",
@@ -661,7 +659,9 @@ static int get_param0(int id)
 	}
 
 	of_property_for_each_u32(np, "param0", prop, p, val) {
+#ifdef CONFIG_SEC_DEBUG
 		pr_debug("%d : %d\n", num_param, val);
+#endif
 		hw_param0[num_param++] = val;
 
 		if (num_param >= NUM_PARAM0)
@@ -731,12 +731,12 @@ static ssize_t show_extra_info(struct device *dev,
 	_kern_ex_info_t *p_kinfo = NULL;
 	int cpu = -1;
 
+#ifdef CONFIG_SEC_DEBUG
 	if (!__is_ready_debug_reset_header()) {
 		pr_info("updated nothing.\n");
 		goto out;
 	}
 
-#ifdef CONFIG_SEC_DEBUG
 	reset_reason = sec_debug_get_reset_reason();
 	if (!__is_valid_reset_reason(reset_reason))
 		goto out;
@@ -875,12 +875,12 @@ static ssize_t show_extrb_info(struct device *dev,
 	rst_exinfo_t *p_rst_exinfo = NULL;
 	__rpm_log_t *pRPMlog = NULL;
 
+#ifdef CONFIG_SEC_DEBUG
 	if (!__is_ready_debug_reset_header()) {
 		pr_info("updated nothing.\n");
 		goto out;
 	}
 
-#ifdef CONFIG_SEC_DEBUG
 	reset_reason = sec_debug_get_reset_reason();
 	if (!__is_valid_reset_reason(reset_reason))
 		goto out;
@@ -892,12 +892,12 @@ static ssize_t show_extrb_info(struct device *dev,
 		goto out;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	if (!read_debug_partition(debug_index_reset_ex_info, p_rst_exinfo)) {
 		pr_err("%s : fail - get param!!\n", __func__);
 		goto out;
 	}
 
-#ifdef CONFIG_SEC_DEBUG
 	offset += scnprintf((char*)(buf + offset), SPECIAL_LEN_STR - offset,
 			"\"RR\":\"%s\",", sec_debug_get_reset_reason_str(reset_reason));
 
@@ -1032,12 +1032,12 @@ static ssize_t show_extrc_info(struct device *dev,
 	unsigned int i = 0;
 	char *extrc_buf = NULL;
 
+#ifdef CONFIG_SEC_DEBUG
 	if (!__is_ready_debug_reset_header()) {
 		pr_info("updated nothing.\n");
 		goto out;
 	}
 
-#ifdef CONFIG_SEC_DEBUG
 	reset_reason = sec_debug_get_reset_reason();
 	if (!__is_valid_reset_reason(reset_reason))
 		goto out;
@@ -1090,12 +1090,12 @@ static ssize_t show_extrt_info(struct device *dev,
 	struct tzdbg_t *tz_diag_info = NULL;
 	unsigned int i = 0;
 
+#ifdef CONFIG_SEC_DEBUG
 	if (!__is_ready_debug_reset_header()) {
 		pr_info("updated nothing.\n");
 		goto out;
 	}
 
-#ifdef CONFIG_SEC_DEBUG
 	reset_reason = sec_debug_get_reset_reason();
 	if (!__is_valid_reset_reason(reset_reason))
 		goto out;
@@ -1117,6 +1117,7 @@ static ssize_t show_extrt_info(struct device *dev,
 	offset += scnprintf((char*)(buf + offset), SPECIAL_LEN_STR - offset,
 			"\"RWC\":\"%d\",", sec_debug_get_reset_write_cnt());
 #endif
+
 	if (tz_diag_info->magic_num != TZ_DIAG_LOG_MAGIC) {
 		offset += scnprintf((char*)(buf + offset), SPECIAL_LEN_STR - offset,
 				"\"ERR\":\"tzlog magic num error\"");
@@ -1209,12 +1210,12 @@ static int sec_errp_extra_show(struct seq_file *m, void *v)
 	char upload_cause_str[80] = {0,};
 	char buf[EXTEND_RR_SIZE] = {0, };
 
+#ifdef CONFIG_SEC_DEBUG
 	if (!__is_ready_debug_reset_header()) {
 		pr_info("updated nothing.\n");
 		goto out;
 	}
 
-#ifdef CONFIG_SEC_DEBUG
 	reset_reason = sec_debug_get_reset_reason();
 	if (!__is_valid_reset_reason(reset_reason))
 		goto out;
@@ -1226,10 +1227,12 @@ static int sec_errp_extra_show(struct seq_file *m, void *v)
 	if (!p_rst_exinfo)
 		goto out;
 
+#ifdef CONFIG_SEC_DEBUG
 	if (!read_debug_partition(debug_index_reset_ex_info, p_rst_exinfo)) {
 		pr_err("fail - get param!!\n");
 		goto out;
 	}
+#endif
 	p_kinfo = &p_rst_exinfo->kern_ex_info.info;
 	cpu = p_kinfo->cpu;
 
