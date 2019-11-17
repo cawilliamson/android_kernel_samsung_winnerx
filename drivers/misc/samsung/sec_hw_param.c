@@ -105,7 +105,6 @@ static bool __is_ready_debug_reset_header(void)
 	kfree(header);
 	return true;
 }
-#endif
 
 static bool __is_valid_reset_reason(unsigned int reset_reason)
 {
@@ -121,6 +120,7 @@ static bool __is_valid_reset_reason(unsigned int reset_reason)
 
 	return true;
 }
+#endif
 
 static ap_health_t *phealth;
 
