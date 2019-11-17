@@ -120,14 +120,16 @@ static bool __is_valid_reset_reason(unsigned int reset_reason)
 
 	return true;
 }
-#endif
 
 static ap_health_t *phealth;
+#endif
 
 static bool batt_info_cleaned;
 static void clean_batt_info(void)
 {
+#ifdef CONFIG_SEC_DEBUG
 	memset(&phealth->battery, 0x0, sizeof(battery_health_t));
+#endif
 	batt_info_cleaned = true;
 }
 
@@ -138,9 +140,11 @@ void battery_last_dcvs(int cap, int volt, int temp, int curr)
 	if (phealth == NULL || !batt_info_cleaned)
 		return;
 
+#ifdef CONFIG_SEC_DEBUG
 	if ((phealth->battery.tail & 0xf) >= MAX_BATT_DCVS) {
 		phealth->battery.tail = 0x10;
 	}
+#endif
 
 	tail = phealth->battery.tail & 0xf;
 
@@ -159,7 +163,9 @@ static ssize_t show_last_dcvs(struct device *dev,
 {
 	ssize_t info_size = 0;
 	unsigned int reset_reason;
+#ifdef CONFIG_SEC_DEBUG
 	char *prefix[MAX_CLUSTER_NUM] = {"L3", "SC", "GC"};
+#endif
 	size_t i;
 
 	if (!phealth)
@@ -179,12 +185,12 @@ static ssize_t show_last_dcvs(struct device *dev,
 			sec_debug_get_reset_reason_str(reset_reason));
 	sysfs_scnprintf(buf, info_size, "\"RWC\":\"%d\",",
 			sec_debug_get_reset_write_cnt());
-#endif
 
 	for (i = 0; i < MAX_CLUSTER_NUM; i++) {
 		sysfs_scnprintf(buf, info_size, "\"%sKHz\":\"%u\",", prefix[i],
 				phealth->last_dcvs.apps[i].cpu_KHz);
 	}
+#endif
 
 	sysfs_scnprintf(buf, info_size, "\"DDRKHz\":\"%u\",",
 			phealth->last_dcvs.rpm.ddr_KHz);
@@ -225,6 +231,7 @@ static ssize_t store_ap_health(struct device *dev,
 		return count;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	if (!phealth)
 		phealth = ap_health_data_read();
 
@@ -234,6 +241,7 @@ static ssize_t store_ap_health(struct device *dev,
 	}
 
 	pr_info("clear ap_health_data by HQM %zu\n", sizeof(ap_health_t));
+#endif
 	/*++ add here need init data by HQM ++*/
 	memset(&(phealth->daily_rr), 0, sizeof(reset_reason_t));
 	memset(&(phealth->daily_cache), 0, sizeof(cache_health_t));
@@ -251,6 +259,7 @@ static ssize_t show_ap_health(struct device *dev,
 	int cpu;
 	size_t i;
 
+#ifdef CONFIG_SEC_DEBUG
 	if (!phealth)
 		phealth = ap_health_data_read();
 
@@ -258,6 +267,7 @@ static ssize_t show_ap_health(struct device *dev,
 		pr_err("fail to get ap health info\n");
 		return info_size;
 	}
+#endif
 
 	sysfs_scnprintf(buf, info_size, "\"L1c\":\"");
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
@@ -361,6 +371,7 @@ static ssize_t show_ap_health(struct device *dev,
 	sysfs_scnprintf(buf, info_size,	"\"dEDB\":\"%d\",",
 			phealth->daily_cache.edac_bus_cnt);
 
+#ifdef CONFIG_SEC_DEBUG
 	for (i = 0; i < MAX_PCIE_NUM; i++) {
 		sysfs_scnprintf(buf, info_size, "\"P%zuPF\":\"%d\",", i,
 				phealth->pcie[i].phy_init_fail_cnt);
@@ -380,6 +391,7 @@ static ssize_t show_ap_health(struct device *dev,
 		sysfs_scnprintf(buf, info_size, "\"dP%zuLT\":\"%x\",", i,
 				phealth->daily_pcie[i].link_up_fail_ltssm);
 	}
+#endif
 
 	sysfs_scnprintf(buf, info_size, "\"dNP\":\"%d\",",
 			phealth->daily_rr.np);
@@ -727,7 +739,9 @@ static ssize_t show_extra_info(struct device *dev,
 	unsigned long long rem_nsec;
 	unsigned long long ts_nsec;
 	unsigned int reset_reason;
+#ifdef CONFIG_SEC_DEBUG
 	rst_exinfo_t *p_rst_exinfo = NULL;
+#endif
 	_kern_ex_info_t *p_kinfo = NULL;
 	int cpu = -1;
 
