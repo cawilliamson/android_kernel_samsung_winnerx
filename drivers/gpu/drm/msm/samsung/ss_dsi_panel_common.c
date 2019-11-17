@@ -2134,7 +2134,9 @@ int ss_panel_off_post(struct samsung_display_driver_data *vdd)
 	vdd->self_disp.on = false;
 
 	LCD_INFO("-\n");
+#ifdef CONFIG_SEC_DEBUG
 	SS_XLOG(SS_XLOG_FINISH);
+#endif
 
 	return ret;
 }
@@ -2534,7 +2536,9 @@ static void ss_panel_recovery(struct samsung_display_driver_data *vdd)
 		return;
 	}
 	LCD_INFO("Panel Recovery, Trial Count = %d\n", vdd->panel_recovery_cnt++);
+#ifdef CONFIG_SEC_DEBUG
 	SS_XLOG(vdd->panel_recovery_cnt);
+#endif
 	inc_dpui_u32_field(DPUI_KEY_QCT_RCV_CNT, 1);
 
 	esd_irq_enable(false, true, (void *)vdd);
@@ -2950,7 +2954,6 @@ static void ss_panel_pbaboot_config(struct device_node *np,
 	}
 #endif
 }
-
 
 static void ss_dynamic_mipi_clk_work(struct work_struct *work)
 {

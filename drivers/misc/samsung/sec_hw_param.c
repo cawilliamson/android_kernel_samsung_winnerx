@@ -162,8 +162,8 @@ static ssize_t show_last_dcvs(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	ssize_t info_size = 0;
-	unsigned int reset_reason;
 #ifdef CONFIG_SEC_DEBUG
+	unsigned int reset_reason;
 	char *prefix[MAX_CLUSTER_NUM] = {"L3", "SC", "GC"};
 	size_t i;
 
@@ -205,10 +205,10 @@ static ssize_t show_last_dcvs(struct device *dev,
 			phealth->last_dcvs.pon.pon_reason);
 	sysfs_scnprintf(buf, info_size, "\"PONF\":\"%llx\",",
 			phealth->last_dcvs.pon.fault_reason);
-#endif
 
 	// remove , character
 	info_size--;
+#endif
 
 	check_format(buf, &info_size, DEFAULT_LEN_STR);
 
