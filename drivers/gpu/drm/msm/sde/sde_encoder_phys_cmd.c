@@ -585,7 +585,7 @@ static int _sde_encoder_phys_cmd_handle_ppdone_timeout(
 			pending_kickoff_cnt,
 			frame_event);
 
-#if defined(CONFIG_DISPLAY_SAMSUNG)
+#if defined(CONFIG_DISPLAY_SAMSUNG) && defined(CONFIG_SEC_DEBUG)
 	SS_XLOG(cmd_enc->pp_timeout_report_cnt);
 #endif
 
