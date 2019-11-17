@@ -4026,7 +4026,7 @@ static void _sde_dump_array(struct sde_dbg_reg_base *blk_arr[],
 	mutex_unlock(&sde_dbg_base.mutex);
 }
 
-/**
+/*
  * _sde_dump_work - deferred dump work function
  * @work: work structure
  */
