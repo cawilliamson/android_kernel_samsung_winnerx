@@ -124,18 +124,16 @@ static bool __is_valid_reset_reason(unsigned int reset_reason)
 static ap_health_t *phealth;
 #endif
 
+#ifdef CONFIG_SEC_DEBUG
 static bool batt_info_cleaned;
 static void clean_batt_info(void)
 {
-#ifdef CONFIG_SEC_DEBUG
 	memset(&phealth->battery, 0x0, sizeof(battery_health_t));
-#endif
 	batt_info_cleaned = true;
 }
 
 void battery_last_dcvs(int cap, int volt, int temp, int curr)
 {
-#ifdef CONFIG_SEC_DEBUG
 	uint32_t tail = 0;
 
 	if (phealth == NULL || !batt_info_cleaned)
@@ -154,7 +152,7 @@ void battery_last_dcvs(int cap, int volt, int temp, int curr)
 	phealth->battery.batt[tail].curr = curr;
 
 	phealth->battery.tail++;
-#endif
+
 }
 EXPORT_SYMBOL(battery_last_dcvs);
 
@@ -162,7 +160,7 @@ static ssize_t show_last_dcvs(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	ssize_t info_size = 0;
-#ifdef CONFIG_SEC_DEBUG
+
 	unsigned int reset_reason;
 	char *prefix[MAX_CLUSTER_NUM] = {"L3", "SC", "GC"};
 	size_t i;
@@ -208,13 +206,13 @@ static ssize_t show_last_dcvs(struct device *dev,
 
 	// remove , character
 	info_size--;
-#endif
 
 	check_format(buf, &info_size, DEFAULT_LEN_STR);
 
 	return info_size;
 }
 static DEVICE_ATTR(last_dcvs, 0440, show_last_dcvs, NULL);
+#endif
 
 static ssize_t store_ap_health(struct device *dev,
 		struct device_attribute *attr,
