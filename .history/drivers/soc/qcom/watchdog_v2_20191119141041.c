@@ -375,7 +375,7 @@ EXPORT_SYMBOL(emerg_pet_watchdog);
 
 static void pet_watchdog(struct msm_watchdog_data *wdog_dd)
 {
-	int slack, i, count, prev_count = 0;
+	int slack, i, count, prev_count = 0
 #ifdef CONFIG_SEC_DEBUG	
 	int last_count = 0;
 #endif
