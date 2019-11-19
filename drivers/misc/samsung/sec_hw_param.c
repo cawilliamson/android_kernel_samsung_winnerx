@@ -1319,9 +1319,9 @@ static int __init sec_hw_param_init(void)
 	struct device *sec_hw_param_dev;
 	struct device *sec_reset_reason_dev;
 	int err_hw_param;
+#ifdef CONFIG_SEC_DEBUG
 	int err_errp_extra;
 
-#ifdef CONFIG_SEC_DEBUG
 	dbg_partition_notifier_register(&sec_hw_param_dbg_part_notifier);
 #endif
 
