@@ -1352,7 +1352,7 @@ static int __init sec_hw_param_init(void)
 
 	return (err_hw_param | err_errp_extra);
 #else
-	return (err_hw_param);
+	return err_hw_param;
 #endif
 }
 device_initcall(sec_hw_param_init);
