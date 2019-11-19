@@ -1347,7 +1347,9 @@ static int __init sec_hw_param_init(void)
 			&sec_errp_extra_proc_fops)
 	if (unlikely(!entry))
 		err_errp_extra = -ENODEV;
+#endif
 
+#ifdef CONFIG_SEC_DEBUG
 	return (err_hw_param | err_errp_extra);
 #else
 	return (err_hw_param);

@@ -1342,15 +1342,11 @@ static int __init sec_hw_param_init(void)
 		return -ENODEV;
 	}
 
-#ifdef CONFIG_SEC_DEBUG
 	entry = proc_create("extra", S_IWUGO, NULL,
-			&sec_errp_extra_proc_fops)
+			&sec_errp_extra_proc_fops);
 	if (unlikely(!entry))
 		err_errp_extra = -ENODEV;
 
 	return (err_hw_param | err_errp_extra);
-#else
-	return (err_hw_param);
-#endif
 }
 device_initcall(sec_hw_param_init);
