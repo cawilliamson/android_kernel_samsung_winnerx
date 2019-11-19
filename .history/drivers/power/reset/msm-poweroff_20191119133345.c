@@ -242,16 +242,16 @@ static void set_dload_mode(int on)
 	return;
 }
 
+static void enable_emergency_dload_mode(void)
+{
+	pr_err("dload mode is not enabled on target\n");
+}
+
 static bool get_dload_mode(void)
 {
 	return false;
 }
 #endif
-
-static void enable_emergency_dload_mode(void)
-{
-	pr_err("dload mode is not enabled on target\n");
-}
 
 static void scm_disable_sdi(void)
 {
@@ -371,7 +371,7 @@ static void msm_restart_prepare(const char *cmd)
 					     restart_reason);
 #ifndef CONFIG_SEC_DEBUG
 		} else if (!strncmp(cmd, "edl", 3)) {
-			enable_emergency_dload_mode();
+			enable_emergency_dload_mode(void);
 #endif			
 #if defined(CONFIG_SEC_ABC)
 		} else if (!strncmp(cmd, "user_dram_test", 14) && sec_abc_get_enabled()) {
