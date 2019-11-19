@@ -1313,9 +1313,7 @@ static struct notifier_block sec_hw_param_dbg_part_notifier = {
 
 static int __init sec_hw_param_init(void)
 {
-#ifdef CONFIG_SEC_DEBUG
 	struct proc_dir_entry *entry;
-#endif
 	struct device *sec_hw_param_dev;
 	struct device *sec_reset_reason_dev;
 	int err_hw_param;
