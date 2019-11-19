@@ -1319,9 +1319,7 @@ static int __init sec_hw_param_init(void)
 	int err_hw_param;
 	int err_errp_extra;
 
-#ifdef CONFIG_SEC_DEBUG
 	dbg_partition_notifier_register(&sec_hw_param_dbg_part_notifier);
-#endif
 
 	sec_hw_param_dev = sec_device_create(0, NULL, "sec_hw_param");
 	if (IS_ERR(sec_hw_param_dev)) {

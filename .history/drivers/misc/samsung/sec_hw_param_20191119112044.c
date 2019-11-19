@@ -1298,6 +1298,7 @@ static int sec_errp_extra_proc_open(struct inode *inode, struct file *file)
 {
 	return single_open(file, sec_errp_extra_show, NULL);
 }
+#endif
 
 static const struct file_operations sec_errp_extra_proc_fops = {
 	.open = sec_errp_extra_proc_open,
@@ -1309,7 +1310,6 @@ static const struct file_operations sec_errp_extra_proc_fops = {
 static struct notifier_block sec_hw_param_dbg_part_notifier = {
 	.notifier_call = sec_hw_param_dbg_part_notifier_callback,
 };
-#endif
 
 static int __init sec_hw_param_init(void)
 {
@@ -1319,9 +1319,7 @@ static int __init sec_hw_param_init(void)
 	int err_hw_param;
 	int err_errp_extra;
 
-#ifdef CONFIG_SEC_DEBUG
 	dbg_partition_notifier_register(&sec_hw_param_dbg_part_notifier);
-#endif
 
 	sec_hw_param_dev = sec_device_create(0, NULL, "sec_hw_param");
 	if (IS_ERR(sec_hw_param_dev)) {
