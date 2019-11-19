@@ -33,11 +33,10 @@
 
 #include <linux/sec_smem.h>
 #include <linux/sec_class.h>
-#ifdef CONFIG_SEC_DEBUG
+
 #include <linux/sec_debug.h>
 #include <linux/sec_debug_user_reset.h>
 #include <linux/sec_debug_partition.h>
-#endif
 #include <linux/sec_hw_param.h>
 
 static unsigned int system_rev __read_mostly;
@@ -94,7 +93,7 @@ static void check_format(char *buf, ssize_t *size, int max_len_str)
 		}
 	}
 }
-#ifdef CONFIG_SEC_DEBUG
+
 static bool __is_ready_debug_reset_header(void)
 {
 	struct debug_reset_header *header = get_debug_reset_header();
@@ -122,9 +121,7 @@ static bool __is_valid_reset_reason(unsigned int reset_reason)
 }
 
 static ap_health_t *phealth;
-#endif
 
-#ifdef CONFIG_SEC_DEBUG
 static bool batt_info_cleaned;
 static void clean_batt_info(void)
 {
@@ -212,7 +209,6 @@ static ssize_t show_last_dcvs(struct device *dev,
 	return info_size;
 }
 static DEVICE_ATTR(last_dcvs, 0440, show_last_dcvs, NULL);
-#endif
 
 static ssize_t store_ap_health(struct device *dev,
 		struct device_attribute *attr,
@@ -227,7 +223,6 @@ static ssize_t store_ap_health(struct device *dev,
 		return count;
 	}
 
-#ifdef CONFIG_SEC_DEBUG
 	if (!phealth)
 		phealth = ap_health_data_read();
 
@@ -243,7 +238,6 @@ static ssize_t store_ap_health(struct device *dev,
 	memset(&(phealth->daily_pcie), 0, sizeof(pcie_health_t) * MAX_PCIE_NUM);
 
 	ap_health_data_write(phealth);
-#endif
 
 	return count;
 }
@@ -253,7 +247,6 @@ static ssize_t show_ap_health(struct device *dev,
 {
 	ssize_t info_size = 0;
 	int cpu;
-#ifdef CONFIG_SEC_DEBUG
 	size_t i;
 
 	if (!phealth)
@@ -263,14 +256,11 @@ static ssize_t show_ap_health(struct device *dev,
 		pr_err("fail to get ap health info\n");
 		return info_size;
 	}
-#endif
 
 	sysfs_scnprintf(buf, info_size, "\"L1c\":\"");
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
-#ifdef CONFIG_SEC_DEBUG
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->cache.edac[cpu][0].ce_cnt);
-#endif
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
 		else
@@ -278,11 +268,9 @@ static ssize_t show_ap_health(struct device *dev,
 	}
 
 	sysfs_scnprintf(buf, info_size, "\"L1u\":\"");
-	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
-#ifdef CONFIG_SEC_DEBUG
+	for (cpu = 0; cpu < num_present_cpus(); cpu++) 
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->cache.edac[cpu][0].ue_cnt);
-#endif
 
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
@@ -292,10 +280,8 @@ static ssize_t show_ap_health(struct device *dev,
 
 	sysfs_scnprintf(buf, info_size, "\"L2c\":\"");
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
-#ifdef CONFIG_SEC_DEBUG
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->cache.edac[cpu][1].ce_cnt);
-#endif
 
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
@@ -305,10 +291,8 @@ static ssize_t show_ap_health(struct device *dev,
 
 	sysfs_scnprintf(buf, info_size, "\"L2u\":\"");
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
-#ifdef CONFIG_SEC_DEBUG
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->cache.edac[cpu][1].ue_cnt);
-#endif
 
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
@@ -316,21 +300,17 @@ static ssize_t show_ap_health(struct device *dev,
 			sysfs_scnprintf(buf, info_size, ",");
 	}
 
-#ifdef CONFIG_SEC_DEBUG
 	sysfs_scnprintf(buf, info_size, "\"L3c\":\"%d\",",
 			phealth->cache.edac_l3.ce_cnt);
 	sysfs_scnprintf(buf, info_size,	"\"L3u\":\"%d\",",
 			phealth->cache.edac_l3.ue_cnt);
 	sysfs_scnprintf(buf, info_size,	"\"EDB\":\"%d\",",
 			phealth->cache.edac_bus_cnt);
-#endif
 
 	sysfs_scnprintf(buf, info_size, "\"dL1c\":\"");
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
-#ifdef CONFIG_SEC_DEBUG
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->daily_cache.edac[cpu][0].ce_cnt);
-#endif
 
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
@@ -340,10 +320,8 @@ static ssize_t show_ap_health(struct device *dev,
 
 	sysfs_scnprintf(buf, info_size, "\"dL1u\":\"");
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
-#ifdef CONFIG_SEC_DEBUG
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->daily_cache.edac[cpu][0].ue_cnt);
-#endif
 
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
@@ -353,10 +331,9 @@ static ssize_t show_ap_health(struct device *dev,
 
 	sysfs_scnprintf(buf, info_size, "\"dL2c\":\"");
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
-#ifdef CONFIG_SEC_DEBUG
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->daily_cache.edac[cpu][1].ce_cnt);
-#endif
+
 
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
@@ -366,10 +343,8 @@ static ssize_t show_ap_health(struct device *dev,
 
 	sysfs_scnprintf(buf, info_size, "\"dL2u\":\"");
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
-#ifdef CONFIG_SEC_DEBUG
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->daily_cache.edac[cpu][1].ue_cnt);
-#endif
 
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
@@ -377,7 +352,6 @@ static ssize_t show_ap_health(struct device *dev,
 			sysfs_scnprintf(buf, info_size, ",");
 	}
 
-#ifdef CONFIG_SEC_DEBUG
 	sysfs_scnprintf(buf, info_size, "\"dL3c\":\"%d\",",
 			phealth->daily_cache.edac_l3.ce_cnt);
 	sysfs_scnprintf(buf, info_size,	"\"dL3u\":\"%d\",",
@@ -423,7 +397,6 @@ static ssize_t show_ap_health(struct device *dev,
 			phealth->daily_rr.sp);
 	sysfs_scnprintf(buf, info_size, "\"dPP\":\"%d\"",
 			phealth->daily_rr.pp);
-#endif
 
 	check_format(buf, &info_size, DEFAULT_LEN_STR);
 
@@ -684,9 +657,7 @@ static int get_param0(int id)
 	}
 
 	of_property_for_each_u32(np, "param0", prop, p, val) {
-#ifdef CONFIG_SEC_DEBUG
 		pr_debug("%d : %d\n", num_param, val);
-#endif
 		hw_param0[num_param++] = val;
 
 		if (num_param >= NUM_PARAM0)
@@ -745,7 +716,6 @@ static ssize_t show_ap_info(struct device *dev,
 }
 static DEVICE_ATTR(ap_info, 0440, show_ap_info, NULL);
 
-#ifdef CONFIG_SEC_DEBUG
 static ssize_t show_extra_info(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -1193,7 +1163,6 @@ static int sec_hw_param_dbg_part_notifier_callback(
 
 	return NOTIFY_OK;
 }
-#endif
 
 static struct attribute *sec_hw_param_attributes[] = {
 	&dev_attr_ap_info.attr,
@@ -1204,12 +1173,10 @@ static struct attribute *sec_hw_param_attributes[] = {
 	&dev_attr_eye_dcc_info.attr,
 	&dev_attr_ap_health.attr,
 	&dev_attr_last_dcvs.attr,
-#ifdef CONFIG_SEC_DEBUG
 	&dev_attr_extra_info.attr,
 	&dev_attr_extrb_info.attr,
 	&dev_attr_extrc_info.attr,
 	&dev_attr_extrt_info.attr,
-#endif
 	NULL,
 };
 
@@ -1217,7 +1184,6 @@ static const struct attribute_group sec_hw_param_attribute_group = {
 	.attrs = sec_hw_param_attributes,
 };
 
-#ifdef CONFIG_SEC_DEBUG
 #define EXTEND_RR_SIZE		150
 static int sec_errp_extra_show(struct seq_file *m, void *v)
 {
@@ -1307,21 +1273,16 @@ static const struct file_operations sec_errp_extra_proc_fops = {
 static struct notifier_block sec_hw_param_dbg_part_notifier = {
 	.notifier_call = sec_hw_param_dbg_part_notifier_callback,
 };
-#endif
 
 static int __init sec_hw_param_init(void)
 {
-#ifdef CONFIG_SEC_DEBUG
 	struct proc_dir_entry *entry;
-#endif
 	struct device *sec_hw_param_dev;
 	struct device *sec_reset_reason_dev;
 	int err_hw_param;
-#ifdef CONFIG_SEC_DEBUG
 	int err_errp_extra;
 
 	dbg_partition_notifier_register(&sec_hw_param_dbg_part_notifier);
-#endif
 
 	sec_hw_param_dev = sec_device_create(0, NULL, "sec_hw_param");
 	if (IS_ERR(sec_hw_param_dev)) {
@@ -1342,15 +1303,12 @@ static int __init sec_hw_param_init(void)
 		return -ENODEV;
 	}
 
-#ifdef CONFIG_SEC_DEBUG
 	entry = proc_create("extra", S_IWUGO, NULL,
 			&sec_errp_extra_proc_fops)
 	if (unlikely(!entry))
 		err_errp_extra = -ENODEV;
 
 	return (err_hw_param | err_errp_extra);
-#else
-	return err_hw_param;
-#endif
+
 }
 device_initcall(sec_hw_param_init);
