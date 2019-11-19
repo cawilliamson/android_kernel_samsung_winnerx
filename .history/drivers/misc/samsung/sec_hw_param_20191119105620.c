@@ -1227,10 +1227,12 @@ static int sec_errp_extra_show(struct seq_file *m, void *v)
 	unsigned int reset_reason;
 	rst_exinfo_t *p_rst_exinfo = NULL;
 	_kern_ex_info_t *p_kinfo = NULL;
+#endif
 	int cpu = -1;
 	char upload_cause_str[80] = {0,};
 	char buf[EXTEND_RR_SIZE] = {0, };
 
+#ifdef CONFIG_SEC_DEBUG
 	if (!__is_ready_debug_reset_header()) {
 		pr_info("updated nothing.\n");
 		goto out;
@@ -1271,6 +1273,7 @@ static int sec_errp_extra_show(struct seq_file *m, void *v)
 				" TZ_RR:%s", p_rst_exinfo->tz_ex_info.msg);
 		goto out;
 	}
+#endif
 
 	offset += scnprintf((char*)(buf + offset), EXTEND_RR_SIZE - offset,
 			" PANIC:%s", p_kinfo->panic_buf);
@@ -1293,7 +1296,6 @@ out:
 
 	return 0;
 }
-#endif
 
 static int sec_errp_extra_proc_open(struct inode *inode, struct file *file)
 {

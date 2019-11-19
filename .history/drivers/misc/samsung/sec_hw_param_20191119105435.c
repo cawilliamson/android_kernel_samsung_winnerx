@@ -1219,18 +1219,20 @@ static const struct attribute_group sec_hw_param_attribute_group = {
 	.attrs = sec_hw_param_attributes,
 };
 
-#ifdef CONFIG_SEC_DEBUG
 #define EXTEND_RR_SIZE		150
 static int sec_errp_extra_show(struct seq_file *m, void *v)
 {
 	ssize_t offset = 0;
 	unsigned int reset_reason;
+#ifdef CONFIG_SEC_DEBUG
 	rst_exinfo_t *p_rst_exinfo = NULL;
 	_kern_ex_info_t *p_kinfo = NULL;
+#endif
 	int cpu = -1;
 	char upload_cause_str[80] = {0,};
 	char buf[EXTEND_RR_SIZE] = {0, };
 
+#ifdef CONFIG_SEC_DEBUG
 	if (!__is_ready_debug_reset_header()) {
 		pr_info("updated nothing.\n");
 		goto out;
@@ -1259,6 +1261,7 @@ static int sec_errp_extra_show(struct seq_file *m, void *v)
 			"RWC:%d", sec_debug_get_reset_write_cnt());
 
 	sec_debug_upload_cause_str(p_kinfo->upload_cause, upload_cause_str);
+#endif
 
 	offset += scnprintf((char*)(buf + offset), EXTEND_RR_SIZE - offset,
 			" UPLOAD:%s_0x%x", upload_cause_str, p_kinfo->upload_cause);
@@ -1293,7 +1296,6 @@ out:
 
 	return 0;
 }
-#endif
 
 static int sec_errp_extra_proc_open(struct inode *inode, struct file *file)
 {

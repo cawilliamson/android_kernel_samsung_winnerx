@@ -1219,7 +1219,6 @@ static const struct attribute_group sec_hw_param_attribute_group = {
 	.attrs = sec_hw_param_attributes,
 };
 
-#ifdef CONFIG_SEC_DEBUG
 #define EXTEND_RR_SIZE		150
 static int sec_errp_extra_show(struct seq_file *m, void *v)
 {
@@ -1231,6 +1230,7 @@ static int sec_errp_extra_show(struct seq_file *m, void *v)
 	char upload_cause_str[80] = {0,};
 	char buf[EXTEND_RR_SIZE] = {0, };
 
+#ifdef CONFIG_SEC_DEBUG
 	if (!__is_ready_debug_reset_header()) {
 		pr_info("updated nothing.\n");
 		goto out;
@@ -1239,7 +1239,7 @@ static int sec_errp_extra_show(struct seq_file *m, void *v)
 	reset_reason = sec_debug_get_reset_reason();
 	if (!__is_valid_reset_reason(reset_reason))
 		goto out;
-
+#endif
 	if (reset_reason == USER_UPLOAD_CAUSE_SMPL)
 		goto out;
 
@@ -1247,18 +1247,21 @@ static int sec_errp_extra_show(struct seq_file *m, void *v)
 	if (!p_rst_exinfo)
 		goto out;
 
+#ifdef CONFIG_SEC_DEBUG
 	if (!read_debug_partition(debug_index_reset_ex_info, p_rst_exinfo)) {
 		pr_err("fail - get param!!\n");
 		goto out;
 	}
-
+#endif
 	p_kinfo = &p_rst_exinfo->kern_ex_info.info;
 	cpu = p_kinfo->cpu;
 
+#ifdef CONFIG_SEC_DEBUG
 	offset += scnprintf((char*)(buf + offset), EXTEND_RR_SIZE - offset,
 			"RWC:%d", sec_debug_get_reset_write_cnt());
 
 	sec_debug_upload_cause_str(p_kinfo->upload_cause, upload_cause_str);
+#endif
 
 	offset += scnprintf((char*)(buf + offset), EXTEND_RR_SIZE - offset,
 			" UPLOAD:%s_0x%x", upload_cause_str, p_kinfo->upload_cause);
@@ -1293,7 +1296,6 @@ out:
 
 	return 0;
 }
-#endif
 
 static int sec_errp_extra_proc_open(struct inode *inode, struct file *file)
 {
