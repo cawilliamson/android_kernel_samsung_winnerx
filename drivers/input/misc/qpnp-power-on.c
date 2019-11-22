@@ -1442,7 +1442,9 @@ static int qpnp_control_s2_reset(struct qpnp_pon *pon, struct qpnp_pon_config *c
 
 	return 0;
 }
+#endif
 
+#if defined(CONFIG_SEC_PM)
 int qpnp_set_resin_wk_int(int en)
 {
 	struct qpnp_pon *pon = sys_reset_dev;
