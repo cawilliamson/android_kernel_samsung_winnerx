@@ -397,6 +397,7 @@ static ssize_t ss_disp_octa_id_show(struct device *dev,
 
 	LCD_INFO("poc(%d)\n", poc);
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("%d%d%d%02x%02x%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c\n",
 		site, rework, poc, octa_id[2], octa_id[3],
 		octa_id[4] != 0 ? octa_id[4] : '0',
@@ -415,7 +416,7 @@ static ssize_t ss_disp_octa_id_show(struct device *dev,
 		octa_id[17] != 0 ? octa_id[17] : '0',
 		octa_id[18] != 0 ? octa_id[18] : '0',
 		octa_id[19] != 0 ? octa_id[19] : '0');
-
+#endif
 	return strnlen(buf, string_size);
 }
 
@@ -1518,7 +1519,9 @@ static ssize_t ss_brt_avg_show(struct device *dev,
 		return ret;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("++ \n");
+#endif
 
 	if (vdd->copr.copr_on) {
 		mutex_lock(&vdd->copr.copr_lock);
@@ -1541,7 +1544,9 @@ static ssize_t ss_brt_avg_show(struct device *dev,
 		ret = snprintf((char *)buf, 10, "-1\n");
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("-- \n");
+#endif
 
 	return strlen(buf);
 }
