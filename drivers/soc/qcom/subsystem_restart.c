@@ -1312,7 +1312,9 @@ void subsys_set_reset_reason(const char *name, int val)
 int subsystem_restart_dev(struct subsys_device *dev)
 {
 	const char *name;
+#ifdef CONFIG_SEC_DEBUG
 	int ssr_enable = 1;
+#endif
 
 	if (!get_device(&dev->dev))
 		return -ENODEV;
