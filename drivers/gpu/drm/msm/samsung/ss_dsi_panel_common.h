@@ -89,7 +89,7 @@ extern bool enable_pr_debug;
 
 #define LOG_KEYWORD "[SDE]"
 
-#ifdef CONFIG_SEC_DEBUG
+#if defined(CONFIG_SEC_DEBUG)
 #define LCD_DEBUG(X, ...)	\
 		do {	\
 			if (enable_pr_debug)	\
@@ -97,7 +97,9 @@ extern bool enable_pr_debug;
 			else	\
 				pr_debug("%s %s : "X, LOG_KEYWORD, __func__, ## __VA_ARGS__);\
 		} while (0)	\
+
 #endif
+
 #define LCD_INFO(X, ...) pr_info("%s %s : "X, LOG_KEYWORD, __func__, ## __VA_ARGS__)
 #define LCD_INFO_ONCE(X, ...) pr_info_once("%s %s : "X, LOG_KEYWORD, __func__, ## __VA_ARGS__)
 #define LCD_ERR(X, ...) pr_err("%s %s : "X, LOG_KEYWORD, __func__, ## __VA_ARGS__)
