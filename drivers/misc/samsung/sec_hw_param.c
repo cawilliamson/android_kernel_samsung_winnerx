@@ -34,9 +34,11 @@
 #include <linux/sec_smem.h>
 #include <linux/sec_class.h>
 
+#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
 #include <linux/sec_debug_user_reset.h>
 #include <linux/sec_debug_partition.h>
+#endif
 #include <linux/sec_hw_param.h>
 
 static unsigned int system_rev __read_mostly;
@@ -62,6 +64,8 @@ unsigned int sec_hw_rev(void)
 	return system_rev;
 }
 EXPORT_SYMBOL(sec_hw_rev);
+
+#ifdef CONFIG_SEC_DEBUG
 
 static void check_format(char *buf, ssize_t *size, int max_len_str)
 {
@@ -1312,3 +1316,5 @@ static int __init sec_hw_param_init(void)
 
 }
 device_initcall(sec_hw_param_init);
+
+#endif // CONFIG_SEC_DEBUG
