@@ -4896,7 +4896,16 @@ EXPORT_SYMBOL_GPL(of_clk_get_parent_name);
  * Return: number of parents for the clock node.
  */
 int of_clk_parent_fill(struct device_node *np, const char **parents,
-		       unsigned i#ifdef CONFIG_SEC_DEBUG
+		       unsigned int size)
+{
+	unsigned int i = 0;
+
+	while (i < size && (parents[i] = of_clk_get_parent_name(np, i)) != NULL)
+		i++;
+
+	return i;
+}
+EXPORT_SYMBOL_GPL(of_clk_parent_fill);
 
 struct clock_provider {
 	of_clk_init_cb_t clk_init_cb;
