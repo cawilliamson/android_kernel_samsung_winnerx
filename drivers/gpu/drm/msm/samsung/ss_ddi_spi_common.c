@@ -76,12 +76,16 @@ int ss_spi_read(struct spi_device *spi, u8 *buf,
 #endif
 
 	if (vdd->ddi_spi_status == DDI_SPI_SUSPEND) {
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("ddi spi is suspend..\n");
+#endif
 		ret = -EINVAL;
 		goto err;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("++\n");
+#endif
 
 	spi_message_init(&msg);
 
@@ -94,11 +98,13 @@ int ss_spi_read(struct spi_device *spi, u8 *buf,
 		goto err;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("rx(0x%x) : ", tx_buf[1]);
 	for (i = 0; i < rx_size; i++) {
 		LCD_DEBUG("[%d] %02x ", i+1, rx_buf[i]);
 	}
 	LCD_DEBUG("\n");
+#endif
 
 	memcpy(buf, rx_buf, rx_size);
 
@@ -137,7 +143,9 @@ err:
 		kfree(dummy_buf);
 #endif
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("--\n");
+#endif
 
 	return ret;
 }
@@ -233,7 +241,9 @@ static int ddi_spi_suspend(struct device *dev)
 
 	mutex_lock(&vdd->ss_spi_lock);
 	vdd->ddi_spi_status = DDI_SPI_SUSPEND;
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG(" %d\n", vdd->ddi_spi_status);
+#endif
 	mutex_unlock(&vdd->ss_spi_lock);
 
 	return 0;
@@ -251,7 +261,9 @@ static int ddi_spi_resume(struct device *dev)
 
 	mutex_lock(&vdd->ss_spi_lock);
 	vdd->ddi_spi_status = DDI_SPI_RESUME;
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG(" %d\n", vdd->ddi_spi_status);
+#endif
 	mutex_unlock(&vdd->ss_spi_lock);
 
 	return 0;

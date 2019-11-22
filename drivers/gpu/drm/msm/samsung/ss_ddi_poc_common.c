@@ -468,7 +468,9 @@ static int _ss_dsi_poc_read(struct samsung_display_driver_data *vdd, char __user
 	int image_size = 0;
 	int ret = 0;	
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("ss_dsi_poc_read \n");
+#endif
 
 	if (IS_ERR_OR_NULL(vdd)) {
 		LCD_ERR("no vdd");
@@ -543,7 +545,9 @@ static ssize_t _ss_dsi_poc_write(struct samsung_display_driver_data *vdd, const 
 	int image_size = 0;
 	int ret = 0;
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("ss_dsi_poc_write : count (%d), ppos(%d) \n", (int)count, (int)*ppos);
+#endif
 
 	if (IS_ERR_OR_NULL(vdd)) {
 		LCD_ERR("no vdd");
