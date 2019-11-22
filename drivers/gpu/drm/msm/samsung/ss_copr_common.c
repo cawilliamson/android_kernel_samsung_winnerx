@@ -762,9 +762,9 @@ int ss_copr_read(struct samsung_display_driver_data *vdd)
 	int tx_bpw, rx_bpw;
 	int tx_size, rx_size;
 	int ret = 0;
+#ifdef CONFIG_SEC_DEBUG
 	int i;
 
-#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("%s ++ \n", __func__);
 #endif
 
