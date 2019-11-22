@@ -3926,6 +3926,8 @@ int ss_panel_lpm_power_ctrl(struct samsung_display_driver_data *vdd, int enable)
 #ifdef CONFIG_SEC_DEBUG
 		} else
 			LCD_DEBUG("enable=%d, previous voltage : %d\n", enable, get_voltage);
+#else
+		}
 #endif
 	} else { /* AOD OFF(Exit) */
 		if (get_voltage != target_vreg->min_voltage) {
@@ -3963,6 +3965,8 @@ int ss_panel_lpm_power_ctrl(struct samsung_display_driver_data *vdd, int enable)
 #ifdef CONFIG_SEC_DEBUG
 		} else
 			LCD_DEBUG("enable=%d, previous voltage : %d\n", enable, get_voltage);
+#else
+		}
 #endif
 	}
 
@@ -5024,6 +5028,8 @@ int ss_brightness_dcs_hmt(struct samsung_display_driver_data *vdd,
 #ifdef CONFIG_SEC_DEBUG
 		} else
 			LCD_DEBUG("single_transmission_fail error\n");
+#else
+		}
 #endif
 	} else
 		LCD_INFO("level : %d skip\n", vdd->br.bl_level);
