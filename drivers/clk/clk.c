@@ -153,8 +153,8 @@ struct clk_core {
 
 #ifdef CONFIG_SEC_DEBUG
 extern unsigned int sec_debug_level(void);
-#endif
 bool is_dbg_level_low;
+#endif
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/clk.h>
@@ -2209,8 +2209,10 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
 	/* prevent racing with updates to the clock topology */
 	clk_prepare_lock();
 
+#ifdef CONFIG_SEC_DEBUG
 	if(!is_dbg_level_low)
 		trace_clock_set_rate(clk->core->name, rate, raw_smp_processor_id());
+#endif
 
 	ret = clk_core_set_rate_nolock(clk->core, rate);
 
@@ -4894,16 +4896,7 @@ EXPORT_SYMBOL_GPL(of_clk_get_parent_name);
  * Return: number of parents for the clock node.
  */
 int of_clk_parent_fill(struct device_node *np, const char **parents,
-		       unsigned int size)
-{
-	unsigned int i = 0;
-
-	while (i < size && (parents[i] = of_clk_get_parent_name(np, i)) != NULL)
-		i++;
-
-	return i;
-}
-EXPORT_SYMBOL_GPL(of_clk_parent_fill);
+		       unsigned i#ifdef CONFIG_SEC_DEBUG
 
 struct clock_provider {
 	of_clk_init_cb_t clk_init_cb;
@@ -5002,10 +4995,12 @@ void __init of_clk_init(const struct of_device_id *matches)
 		matches = &__clk_of_table;
 
 	//ANDROID_DEBUG_LEVEL_LOW		0x4f4c
+#ifdef CONFIG_SEC_DEBUG
 	if (sec_debug_level() == 0x4f4c)
 		is_dbg_level_low = true;
 	else
 		is_dbg_level_low = false;
+#endif
 
 	/* First prepare the list of the clocks providers */
 	for_each_matching_node_and_match(np, matches, &match) {
