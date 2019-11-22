@@ -151,7 +151,9 @@ struct clk_core {
 	int			num_rate_max;
 };
 
+#ifdef CONFIG_SEC_DEBUG
 extern unsigned int sec_debug_level(void);
+#endif
 bool is_dbg_level_low;
 
 #define CREATE_TRACE_POINTS
