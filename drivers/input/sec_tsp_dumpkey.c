@@ -236,11 +236,11 @@ static int check_tsp_crash_keys(struct notifier_block *this,
 	return NOTIFY_OK;
 
 }
-#endif
 
 static struct notifier_block nb_gpio_keys = {
 	.notifier_call = check_tsp_crash_keys,
 };
+#endif
 
 static int __init sec_tsp_dumpkey_init(void)
 {
