@@ -430,11 +430,13 @@ struct adreno_gpu_core {
 };
 
 
+#ifdef CONFIG_CORESIGHT
 enum gpu_coresight_sources {
 	GPU_CORESIGHT_GX = 0,
 	GPU_CORESIGHT_CX = 1,
 	GPU_CORESIGHT_MAX,
 };
+#endif
 
 struct page_fault_info {
 	unsigned long addr;
@@ -586,7 +588,9 @@ struct adreno_device {
 	unsigned int speed_bin;
 	unsigned int quirks;
 
+#ifdef CONFIG_CORESIGHT
 	struct coresight_device *csdev[GPU_CORESIGHT_MAX];
+#endif
 	uint32_t gpmu_throttle_counters[ADRENO_GPMU_THROTTLE_COUNTERS];
 	struct work_struct irq_storm_work;
 
@@ -629,7 +633,9 @@ enum adreno_device_flags {
 	ADRENO_DEVICE_PWRON = 0,
 	ADRENO_DEVICE_PWRON_FIXUP = 1,
 	ADRENO_DEVICE_INITIALIZED = 2,
+#ifdef CONFIG_CORESIGHT
 	ADRENO_DEVICE_CORESIGHT = 3,
+#endif
 	ADRENO_DEVICE_HANG_INTR = 4,
 	ADRENO_DEVICE_STARTED = 5,
 	ADRENO_DEVICE_FAULT = 6,
@@ -641,7 +647,9 @@ enum adreno_device_flags {
 	ADRENO_DEVICE_ISDB_ENABLED = 12,
 	ADRENO_DEVICE_CACHE_FLUSH_TS_SUSPENDED = 13,
 	ADRENO_DEVICE_HARD_RESET = 14,
+#ifdef CONFIG_CORESIGHT
 	ADRENO_DEVICE_CORESIGHT_CX = 16,
+#endif
 };
 
 /**
@@ -850,6 +858,7 @@ struct adreno_vbif_snapshot_registers {
  * @value: Current shadow value of the register (to be reprogrammed after power
  * collapse)
  */
+#ifdef CONFIG_CORESIGHT
 struct adreno_coresight_register {
 	unsigned int offset;
 	unsigned int initial;
@@ -887,7 +896,7 @@ struct adreno_coresight {
 	const struct attribute_group **groups;
 	unsigned int atid;
 };
-
+#endif
 
 struct adreno_irq_funcs {
 	void (*func)(struct adreno_device *, int);
@@ -959,7 +968,9 @@ struct adreno_gpudev {
 	const struct adreno_invalid_countables *invalid_countables;
 	struct adreno_snapshot_data *snapshot_data;
 
+#ifdef CONFIG_CORESIGHT
 	struct adreno_coresight *coresight[GPU_CORESIGHT_MAX];
+#endif
 
 	struct adreno_irq *irq;
 	int num_prio_levels;
@@ -1146,12 +1157,14 @@ void adreno_fault_skipcmd_detached(struct adreno_device *adreno_dev,
 					 struct adreno_context *drawctxt,
 					 struct kgsl_drawobj *drawobj);
 
+#ifdef CONFIG_CORESIGHT
 int adreno_coresight_init(struct adreno_device *adreno_dev);
 
 void adreno_coresight_start(struct adreno_device *adreno_dev);
 void adreno_coresight_stop(struct adreno_device *adreno_dev);
 
 void adreno_coresight_remove(struct adreno_device *adreno_dev);
+#endif
 
 bool adreno_hw_isidle(struct adreno_device *adreno_dev);
 
