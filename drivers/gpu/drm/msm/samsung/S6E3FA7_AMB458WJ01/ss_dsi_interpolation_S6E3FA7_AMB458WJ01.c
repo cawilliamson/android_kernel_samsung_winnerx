@@ -537,7 +537,9 @@ void gen_hbm_interpolation_gamma_S6E3FA7_AMB458WJ01(struct samsung_display_drive
 
 	for (step_cnt = 0; step_cnt < hbm_interpolation_step; step_cnt++) {
 		hbm_interpolation_candela[step_cnt] = ss_itp->hbm.br_table[step_cnt].lux_mode;
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("%d candela : %d\n", step_cnt, hbm_interpolation_candela[step_cnt]);
+#endif
 	}
 
 	/* copy & extend V255 BIT8 for (hbm & normal) max gamma*/
@@ -588,11 +590,13 @@ void gen_hbm_interpolation_gamma_S6E3FA7_AMB458WJ01(struct samsung_display_drive
 		}
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	for (extend_index = 0, extend_index = 0; extend_index < extension_gamma_size; extend_index++) {
 		LCD_DEBUG("%d 0x%x 0x%x\n", extend_index, extend_hbm_max_gamma[extend_index], extend_normal_max_gamma[extend_index]);
 	}
 
 	LCD_DEBUG("normal_max_candela : %d hbm_max_candela %d\n", normal_max_candela, hbm_max_candela);
+#endif
 
 	for (step_cnt = 0 ; step_cnt < hbm_interpolation_step; step_cnt++) {
 		gen_rate = ((hbm_interpolation_candela[step_cnt] - normal_max_candela) * BIT_SHFIT_MUL) /
