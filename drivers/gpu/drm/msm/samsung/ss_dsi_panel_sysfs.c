@@ -417,6 +417,7 @@ static ssize_t ss_disp_octa_id_show(struct device *dev,
 		octa_id[18] != 0 ? octa_id[18] : '0',
 		octa_id[19] != 0 ? octa_id[19] : '0');
 #endif
+
 	return strnlen(buf, string_size);
 }
 

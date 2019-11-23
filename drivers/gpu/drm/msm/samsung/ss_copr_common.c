@@ -598,6 +598,7 @@ int ss_copr_get_roi_opr_2P0(struct samsung_display_driver_data *vdd)
 err:
 	/* restore copr cmd */
 	ss_copr_set_cmd(vdd, &cmd_backup);
+
 #ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("--\n");
 #endif
@@ -813,6 +814,7 @@ int ss_copr_read(struct samsung_display_driver_data *vdd)
 		LCD_DEBUG("[%d] current_copr (%d), avg_copr (%d) , comp_copr(%d)\n",
 			vdd->copr.current_cnt, vdd->copr.current_copr, vdd->copr.avg_copr, vdd->copr.comp_copr);
 #endif
+
 	/* If current_copr is over 0, copr work thread will be stopped */
 	if (vdd->display_status_dsi.wait_actual_disp_on) {
 		LCD_INFO("ACTUAL_DISPLAY_ON\n");

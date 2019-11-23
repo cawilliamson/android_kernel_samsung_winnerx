@@ -160,6 +160,7 @@ static void gen_hbm_interpolation_platform_level_lux_mode(struct samsung_display
 					hbm_itp->br_table[index].interpolation_br_x10000,
 					hbm_itp->br_table[index].lux_mode);
 #endif
+
 			index++;
 		}
 	}

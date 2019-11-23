@@ -21,6 +21,7 @@
 
 #ifndef ARRAYSIZE
 #define ARRAYSIZE(a)		(sizeof(a) / sizeof(a[0]))
+#endif
 
 /* Input sequence 9530 */
 #define CRASH_COUNT_FIRST 3

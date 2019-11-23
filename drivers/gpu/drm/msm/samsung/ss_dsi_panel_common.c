@@ -3183,6 +3183,7 @@ static void ss_panel_parse_dt(struct samsung_display_driver_data *vdd)
 #ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("vdd->gct.is_support = %d\n", vdd->gct.is_support);
 #endif
+
 	/* POC Driver */
 	vdd->poc_driver.is_support = of_property_read_bool(np, "samsung,support_poc_driver");
 	LCD_INFO("[POC] is_support = %d\n", vdd->poc_driver.is_support);

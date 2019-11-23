@@ -33,7 +33,6 @@
 
 #include <linux/sec_smem.h>
 #include <linux/sec_class.h>
-
 #ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
 #include <linux/sec_debug_user_reset.h>
@@ -153,7 +152,6 @@ void battery_last_dcvs(int cap, int volt, int temp, int curr)
 	phealth->battery.batt[tail].curr = curr;
 
 	phealth->battery.tail++;
-
 }
 EXPORT_SYMBOL(battery_last_dcvs);
 
@@ -161,7 +159,6 @@ static ssize_t show_last_dcvs(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
 	ssize_t info_size = 0;
-
 	unsigned int reset_reason;
 	char *prefix[MAX_CLUSTER_NUM] = {"L3", "SC", "GC"};
 	size_t i;
@@ -265,6 +262,7 @@ static ssize_t show_ap_health(struct device *dev,
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->cache.edac[cpu][0].ce_cnt);
+
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
 		else
@@ -272,7 +270,7 @@ static ssize_t show_ap_health(struct device *dev,
 	}
 
 	sysfs_scnprintf(buf, info_size, "\"L1u\":\"");
-	for (cpu = 0; cpu < num_present_cpus(); cpu++) 
+	for (cpu = 0; cpu < num_present_cpus(); cpu++)  {
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->cache.edac[cpu][0].ue_cnt);
 
@@ -337,7 +335,6 @@ static ssize_t show_ap_health(struct device *dev,
 	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->daily_cache.edac[cpu][1].ce_cnt);
-
 
 		if (cpu == (num_present_cpus() - 1))
 			sysfs_scnprintf(buf, info_size, "\",");
@@ -729,7 +726,6 @@ static ssize_t show_extra_info(struct device *dev,
 	unsigned int reset_reason;
 	rst_exinfo_t *p_rst_exinfo = NULL;
 	_kern_ex_info_t *p_kinfo = NULL;
-
 	int cpu = -1;
 
 	if (!__is_ready_debug_reset_header()) {
@@ -749,7 +745,6 @@ static ssize_t show_extra_info(struct device *dev,
 		pr_err("fail - get param!!\n");
 		goto out;
 	}
-
 	p_kinfo = &p_rst_exinfo->kern_ex_info.info;
 	cpu = p_kinfo->cpu;
 
@@ -847,7 +842,6 @@ static ssize_t show_extra_info(struct device *dev,
 			"\"ROT\":\"W%dC%d\",", get_param0(4), get_param0(5));
 	offset += scnprintf((char*)(buf + offset), EXTRA_LEN_STR - offset,
 			"\"STACK\":\"%s\"", p_kinfo->backtrace);
-
 
 out:
 	if (p_rst_exinfo)
@@ -1219,7 +1213,6 @@ static int sec_errp_extra_show(struct seq_file *m, void *v)
 		pr_err("fail - get param!!\n");
 		goto out;
 	}
-
 	p_kinfo = &p_rst_exinfo->kern_ex_info.info;
 	cpu = p_kinfo->cpu;
 
@@ -1227,7 +1220,6 @@ static int sec_errp_extra_show(struct seq_file *m, void *v)
 			"RWC:%d", sec_debug_get_reset_write_cnt());
 
 	sec_debug_upload_cause_str(p_kinfo->upload_cause, upload_cause_str);
-
 	offset += scnprintf((char*)(buf + offset), EXTEND_RR_SIZE - offset,
 			" UPLOAD:%s_0x%x", upload_cause_str, p_kinfo->upload_cause);
 
@@ -1308,12 +1300,11 @@ static int __init sec_hw_param_init(void)
 	}
 
 	entry = proc_create("extra", S_IWUGO, NULL,
-			&sec_errp_extra_proc_fops)
+			&sec_errp_extra_proc_fops);
 	if (unlikely(!entry))
 		err_errp_extra = -ENODEV;
 
 	return (err_hw_param | err_errp_extra);
-
 }
 device_initcall(sec_hw_param_init);
 
