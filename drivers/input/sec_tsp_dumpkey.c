@@ -197,10 +197,10 @@ static int check_tsp_crash_keys(struct notifier_block *this,
 {
 #ifdef CONFIG_SEC_DEBUG
 	struct sec_key_notifier_param *param = data;
-#endif
 
 	unsigned int code = param->keycode;
 	int state = param->down;
+#endif
 
 	if (!is_crash_keys(code))
 		return NOTIFY_DONE;
