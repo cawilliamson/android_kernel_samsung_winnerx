@@ -1282,6 +1282,7 @@ static void ss_set_panel_lpm_brightness(struct samsung_display_driver_data *vdd)
 		memcpy(cmd_list[0]->cmds[reg_list[0][1]].msg.tx_buf,
 				alpm_brightness[bl_index]->cmds[0].msg.tx_buf,
 				sizeof(char) * cmd_list[0]->cmds[reg_list[0][1]].msg.tx_len);
+
 #ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("[Panel LPM] change brightness cmd : %x, %x\n",
 				cmd_list[0]->cmds[reg_list[0][1]].msg.tx_buf[1],
