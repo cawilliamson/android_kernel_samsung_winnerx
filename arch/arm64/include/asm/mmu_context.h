@@ -34,7 +34,9 @@
 #include <asm/pgtable.h>
 #include <asm/sysreg.h>
 #include <asm/tlbflush.h>
+#ifdef CONFIG_QCOM_RTB
 #include <linux/msm_rtb.h>
+#endif
 
 static inline void contextidr_thread_switch(struct task_struct *next)
 {
