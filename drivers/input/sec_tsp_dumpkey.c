@@ -166,8 +166,10 @@ static void increase_step(void)
 {
 	if (check_step < ARRAY_SIZE(tsp_dump_key_combination))
 		check_step++;
+#ifdef CONFIG_SEC_DEBUG
 	else if (dump_callbacks.inform_dump)
 		dump_callbacks.inform_dump();
+#endif
 }
 
 static void reset_step(void)
@@ -179,8 +181,10 @@ static void increase_count(void)
 {
 	if (check_count < get_count_for_panic())
 		check_count++;
+#ifdef CONFIG_SEC_DEBUG
 	else if (dump_callbacks.inform_dump)
 		dump_callbacks.inform_dump();
+#endif
 }
 
 static void reset_count(void)
@@ -191,7 +195,9 @@ static void reset_count(void)
 static int check_tsp_crash_keys(struct notifier_block *this,
 				unsigned long type, void *data)
 {
+#ifdef CONFIG_SEC_DEBUG
 	struct sec_key_notifier_param *param = data;
+#endif
 
 	unsigned int code = param->keycode;
 	int state = param->down;
