@@ -15,9 +15,11 @@
 #include <linux/notifier.h>
 #include <linux/spinlock.h>
 #include <linux/list_sort.h>
+#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
 
 #include "../debug/sec_key_notifier.h"
+#endif
 
 #ifndef ARRAYSIZE
 #define ARRAYSIZE(a)		(sizeof(a) / sizeof(a[0]))
@@ -236,7 +238,9 @@ static int __init sec_tsp_dumpkey_init(void)
 {
 	/* only work for debug level is low */
 //	if (unlikely(!sec_debug_is_enabled()))
+#ifdef CONFIG_SEC_DEBUG
 		sec_kn_register_notifier(&nb_gpio_keys);
+#endif
 	return 0;
 }
 
