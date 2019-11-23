@@ -192,15 +192,14 @@ static void reset_count(void)
 	check_count = 0;
 }
 
+#ifdef CONFIG_SEC_DEBUG
 static int check_tsp_crash_keys(struct notifier_block *this,
 				unsigned long type, void *data)
 {
-#ifdef CONFIG_SEC_DEBUG
 	struct sec_key_notifier_param *param = data;
 
 	unsigned int code = param->keycode;
 	int state = param->down;
-#endif
 
 	if (!is_crash_keys(code))
 		return NOTIFY_DONE;
@@ -237,6 +236,7 @@ static int check_tsp_crash_keys(struct notifier_block *this,
 	return NOTIFY_OK;
 
 }
+#endif
 
 static struct notifier_block nb_gpio_keys = {
 	.notifier_call = check_tsp_crash_keys,
