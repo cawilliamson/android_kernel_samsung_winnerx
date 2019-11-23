@@ -541,7 +541,9 @@ static int ss_octa_id_read(struct samsung_display_driver_data *vdd)
 
 static struct dsi_panel_cmd_set *ss_aid(struct samsung_display_driver_data *vdd, int *level_key)
 {
+#ifdef CONFIG_SEC_DEBUG
 	int cd_index = 0;
+#endif
 	struct dsi_panel_cmd_set *aid_cmds = ss_get_cmds(vdd, TX_PAC_AID_SUBDIVISION);
 
 	if (IS_ERR_OR_NULL(vdd)) {
