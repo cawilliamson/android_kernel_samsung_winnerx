@@ -1131,6 +1131,7 @@ static void ss_update_panel_lpm_ctrl_cmd(struct samsung_display_driver_data *vdd
 
 	LCD_DEBUG("[Panel LPM] change brightness cmd :%d, %d, %d\n",
 			 bl_index, ctrl_index, mode);
+
 	/*
 	 * Find offset for alpm_reg and alpm_ctrl_reg
 	 * alpm_reg  : Control register for ALPM/HLPM on/off
