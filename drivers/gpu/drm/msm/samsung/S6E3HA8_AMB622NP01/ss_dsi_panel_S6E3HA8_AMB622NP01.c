@@ -694,10 +694,12 @@ static struct dsi_panel_cmd_set *ss_aid(struct samsung_display_driver_data *vdd,
 
 	aid_cmd.count = 1;
 	aid_cmd.cmds = &(ss_get_cmds(vdd, TX_AID_SUBDIVISION)->cmds[cd_index]);
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("[%d] level(%d), aid(%x %x)\n",
 			cd_index, vdd->br.bl_level,
 			aid_cmd.cmds->msg.tx_buf[1],
 			aid_cmd.cmds->msg.tx_buf[2]);
+#endif
 
 	*level_key = LEVEL1_KEY;
 
@@ -778,7 +780,9 @@ static struct dsi_panel_cmd_set *ss_elvss(struct samsung_display_driver_data *vd
 	panel_revision += vdd->panel_revision;
 
 	cd_index  = vdd->br.cd_idx;
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("cd_index (%d)\n", cd_index);
+#endif
 
 	if (!vdd->dtsi_data.smart_acl_elvss_map_table[vdd->panel_revision].size ||
 		cd_index > vdd->dtsi_data.smart_acl_elvss_map_table[vdd->panel_revision].size)
@@ -810,9 +814,11 @@ static struct dsi_panel_cmd_set *ss_elvss(struct samsung_display_driver_data *vd
 			idx_temp = LOW_TEMP;
 
 		elvss_cmd.cmds->msg.tx_buf[3] = elvss_3th_val_array[vdd->br.cd_level][idx_temp];
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("temperature(%d) level(%d):B5 3th (0x%x)\n",
 				vdd->temperature, vdd->br.cd_level,
 				elvss_cmd.cmds->msg.tx_buf[3]);
+#endif
 	}
 
 	/* 0xB5 elvss_23th_val elvss_cal_offset */
@@ -889,7 +895,9 @@ static struct dsi_panel_cmd_set *ss_irc(struct samsung_display_driver_data *vdd,
 	else
 		cd_index = vdd->br.bl_level;
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("irc idx (%d)\n", cd_index);
+#endif
 
 	irc_set.cmds = &(set->cmds[cd_index]);
 	irc_set.count = 1;
@@ -962,7 +970,9 @@ static struct dsi_panel_cmd_set *ss_gamma(struct samsung_display_driver_data *vd
 		return NULL;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("bl_level : %d candela : %dCD\n", vdd->br.bl_level, vdd->br.cd_level);
+#endif
 
 	if (IS_ERR_OR_NULL(vdd->smart_dimming_dsi->generate_gamma)) {
 		LCD_ERR("generate_gamma is NULL error");
@@ -1003,7 +1013,9 @@ static struct dsi_panel_cmd_set *ss_gamma_hmt(struct samsung_display_driver_data
 		return NULL;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("hmt_bl_level : %d candela : %dCD\n", vdd->hmt_stat.hmt_bl_level, vdd->hmt_stat.candela_level_hmt);
+#endif
 
 	if (IS_ERR_OR_NULL(vdd->smart_dimming_dsi_hmt->generate_gamma)) {
 		LCD_ERR("generate_gamma is NULL");
@@ -1080,7 +1092,9 @@ static struct dsi_panel_cmd_set *ss_elvss_hmt(struct samsung_display_driver_data
 	panel_revision += vdd->panel_revision;
 
 	cd_index  = vdd->br.cd_idx;
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("cd_index (%d)\n", cd_index);
+#endif
 
 	if (!vdd->dtsi_data.smart_acl_elvss_map_table[vdd->panel_revision].size ||
 		cd_index > vdd->dtsi_data.smart_acl_elvss_map_table[vdd->panel_revision].size)
@@ -1112,9 +1126,11 @@ static struct dsi_panel_cmd_set *ss_elvss_hmt(struct samsung_display_driver_data
 			idx_temp = LOW_TEMP;
 
 		elvss_cmd.cmds->msg.tx_buf[3] = elvss_3th_val_array[vdd->hmt_stat.candela_level_hmt][idx_temp];
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("temperature(%d) level(%d):B5 3th (0x%x)\n",
 				vdd->temperature, vdd->hmt_stat.candela_level_hmt,
 				elvss_cmd.cmds->msg.tx_buf[3]);
+#endif
 	}
 
 	/* 0xB5 elvss_23th_val elvss_cal_offset */
@@ -1199,7 +1215,9 @@ static void ss_set_panel_lpm_brightness(struct samsung_display_driver_data *vdd)
 		{ALPM_REG, -EINVAL},
 		{ALPM_CTRL_REG, -EINVAL} };
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("%s++\n", __func__);
+#endif
 
 	cmd_list[0] = ss_get_cmds(vdd, TX_LPM_BL_CMD);
 	cmd_list[1] = ss_get_cmds(vdd, TX_LPM_BL_CMD);
@@ -1245,8 +1263,10 @@ static void ss_set_panel_lpm_brightness(struct samsung_display_driver_data *vdd)
 		break;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("[Panel LPM]bl_index %d, ctrl_index %d, mode %d\n",
 			 bl_index, ctrl_index, mode);
+#endif
 
 	/*
 	 * Find offset for alpm_reg and alpm_ctrl_reg
@@ -1262,10 +1282,11 @@ static void ss_set_panel_lpm_brightness(struct samsung_display_driver_data *vdd)
 		memcpy(cmd_list[0]->cmds[reg_list[0][1]].msg.tx_buf,
 				alpm_brightness[bl_index]->cmds[0].msg.tx_buf,
 				sizeof(char) * cmd_list[0]->cmds[reg_list[0][1]].msg.tx_len);
-
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("[Panel LPM] change brightness cmd : %x, %x\n",
 				cmd_list[0]->cmds[reg_list[0][1]].msg.tx_buf[1],
 				alpm_brightness[bl_index]->cmds[0].msg.tx_buf[1]);
+#endif
 	}
 
 	if (reg_list[1][1] != -EINVAL) {
@@ -1275,7 +1296,9 @@ static void ss_set_panel_lpm_brightness(struct samsung_display_driver_data *vdd)
 				alpm_ctrl[ctrl_index]->cmds[0].msg.tx_buf,
 				sizeof(char) * cmd_list[1]->cmds[reg_list[1][1]].msg.tx_len);
 
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("[Panel LPM] update alpm ctrl reg\n");
+#endif
 	}
 
 	//send lpm bl cmd
@@ -1287,8 +1310,9 @@ static void ss_set_panel_lpm_brightness(struct samsung_display_driver_data *vdd)
 				vdd->panel_lpm.lpm_bl_level == LPM_10NIT ? "10NIT" :
 				vdd->panel_lpm.lpm_bl_level == LPM_30NIT ? "30NIT" :
 				vdd->panel_lpm.lpm_bl_level == LPM_60NIT ? "60NIT" : "UNKNOWN");
-
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("%s--\n", __func__);
+#endif
 }
 
 /*
@@ -1372,8 +1396,10 @@ static void ss_update_panel_lpm_ctrl_cmd(struct samsung_display_driver_data *vdd
 		break;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("[Panel LPM] change brightness cmd :%d, %d, %d\n",
 			 bl_index, ctrl_index, mode);
+#endif
 
 	/*
 	 * Find offset for alpm_reg and alpm_ctrl_reg
@@ -1394,9 +1420,11 @@ static void ss_update_panel_lpm_ctrl_cmd(struct samsung_display_driver_data *vdd
 				alpm_brightness[bl_index]->cmds[0].msg.tx_buf,
 				sizeof(char) * cmd_list[0]->cmds[reg_list[0][1]].msg.tx_len);
 
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("[Panel LPM] change brightness cmd : %x, %x\n",
 				cmd_list[0]->cmds[reg_list[0][1]].msg.tx_buf[1],
 				alpm_brightness[bl_index]->cmds[0].msg.tx_buf[1]);
+#endif
 	}
 
 	if (reg_list[1][1] != -EINVAL) {
@@ -1406,7 +1434,9 @@ static void ss_update_panel_lpm_ctrl_cmd(struct samsung_display_driver_data *vdd
 				alpm_ctrl[ctrl_index]->cmds[0].msg.tx_buf,
 				sizeof(char) * cmd_list[1]->cmds[reg_list[1][1]].msg.tx_len);
 
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("[Panel LPM] update alpm ctrl reg\n");
+#endif
 	}
 
 	if ((off_reg_list[0][1] != -EINVAL) &&\
