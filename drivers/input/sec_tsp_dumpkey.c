@@ -15,15 +15,12 @@
 #include <linux/notifier.h>
 #include <linux/spinlock.h>
 #include <linux/list_sort.h>
-#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
 
 #include "../debug/sec_key_notifier.h"
-#endif
 
 #ifndef ARRAYSIZE
 #define ARRAYSIZE(a)		(sizeof(a) / sizeof(a[0]))
-#endif
 
 /* Input sequence 9530 */
 #define CRASH_COUNT_FIRST 3
@@ -33,9 +30,7 @@
 #define KEY_STATE_DOWN 1
 #define KEY_STATE_UP 0
 
-#ifdef CONFIG_SEC_DEBUG
 struct tsp_dump_callbacks dump_callbacks;
-#endif
 
 struct crash_key {
 	unsigned int key_code;
@@ -85,12 +80,10 @@ static unsigned int get_current_step_key_code(void)
 	return tsp_dump_key_combination[check_step].key_code;
 }
 
-#ifdef CONFIG_SEC_DEBUG
 static int is_key_matched_for_current_step(unsigned int code)
 {
 	return (code == get_current_step_key_code());
 }
-#endif
 
 static int is_crash_keys(unsigned int code)
 {
@@ -168,10 +161,8 @@ static void increase_step(void)
 {
 	if (check_step < ARRAY_SIZE(tsp_dump_key_combination))
 		check_step++;
-#ifdef CONFIG_SEC_DEBUG
 	else if (dump_callbacks.inform_dump)
 		dump_callbacks.inform_dump();
-#endif
 }
 
 static void reset_step(void)
@@ -183,10 +174,8 @@ static void increase_count(void)
 {
 	if (check_count < get_count_for_panic())
 		check_count++;
-#ifdef CONFIG_SEC_DEBUG
 	else if (dump_callbacks.inform_dump)
 		dump_callbacks.inform_dump();
-#endif
 }
 
 static void reset_count(void)
@@ -194,7 +183,6 @@ static void reset_count(void)
 	check_count = 0;
 }
 
-#ifdef CONFIG_SEC_DEBUG
 static int check_tsp_crash_keys(struct notifier_block *this,
 				unsigned long type, void *data)
 {
@@ -242,15 +230,12 @@ static int check_tsp_crash_keys(struct notifier_block *this,
 static struct notifier_block nb_gpio_keys = {
 	.notifier_call = check_tsp_crash_keys,
 };
-#endif
 
 static int __init sec_tsp_dumpkey_init(void)
 {
 	/* only work for debug level is low */
 //	if (unlikely(!sec_debug_is_enabled()))
-#ifdef CONFIG_SEC_DEBUG
 		sec_kn_register_notifier(&nb_gpio_keys);
-#endif
 	return 0;
 }
 
