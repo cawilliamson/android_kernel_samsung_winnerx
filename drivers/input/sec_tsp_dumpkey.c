@@ -33,7 +33,9 @@
 #define KEY_STATE_DOWN 1
 #define KEY_STATE_UP 0
 
+#ifdef CONFIG_SEC_DEBUG
 struct tsp_dump_callbacks dump_callbacks;
+#endif
 
 struct crash_key {
 	unsigned int key_code;
