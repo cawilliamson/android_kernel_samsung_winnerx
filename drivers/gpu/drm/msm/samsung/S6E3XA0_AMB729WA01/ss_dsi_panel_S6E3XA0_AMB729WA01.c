@@ -1018,6 +1018,7 @@ static void ss_set_panel_lpm_brightness(struct samsung_display_driver_data *vdd)
 				vdd->panel_lpm.lpm_bl_level == LPM_10NIT ? "10NIT" :
 				vdd->panel_lpm.lpm_bl_level == LPM_30NIT ? "30NIT" :
 				vdd->panel_lpm.lpm_bl_level == LPM_60NIT ? "60NIT" : "UNKNOWN");
+
 #ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("%s--\n", __func__);
 #endif
