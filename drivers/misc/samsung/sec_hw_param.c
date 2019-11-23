@@ -270,7 +270,7 @@ static ssize_t show_ap_health(struct device *dev,
 	}
 
 	sysfs_scnprintf(buf, info_size, "\"L1u\":\"");
-	for (cpu = 0; cpu < num_present_cpus(); cpu++)  {
+	for (cpu = 0; cpu < num_present_cpus(); cpu++) {
 		sysfs_scnprintf(buf, info_size, "%d",
 				phealth->cache.edac[cpu][0].ue_cnt);
 
