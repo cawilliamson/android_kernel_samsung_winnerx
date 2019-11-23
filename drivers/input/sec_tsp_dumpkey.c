@@ -85,10 +85,12 @@ static unsigned int get_current_step_key_code(void)
 	return tsp_dump_key_combination[check_step].key_code;
 }
 
+#ifdef CONFIG_SEC_DEBUG
 static int is_key_matched_for_current_step(unsigned int code)
 {
 	return (code == get_current_step_key_code());
 }
+#endif
 
 static int is_crash_keys(unsigned int code)
 {
