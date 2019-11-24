@@ -1337,12 +1337,17 @@ int subsystem_restart_dev(struct subsys_device *dev)
 		ssr_enable = sec_debug_is_enabled_for_ssr();
 	} else
 		pr_info("SSR by only ap debug level!!\n");
+#endif
 
+#ifdef CONFIG_SEC_DEBUG
 	if (!sec_debug_is_enabled() || (!ssr_enable))
+#else
+	if (!ssr_enable)
+#endif
 		dev->restart_level = RESET_SUBSYS_COUPLED;
 	else
 		dev->restart_level = RESET_SOC;
-#endif
+
 	if (!strncmp(name, "modem", 5)) {
 		if (silent_ssr)  /* qcrtr ioctl force silent ssr */
 			dev->restart_level = RESET_SUBSYS_COUPLED;
