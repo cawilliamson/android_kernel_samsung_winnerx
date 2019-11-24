@@ -71,7 +71,6 @@ static void set_hold_key_hold(int state)
 	hold_key_hold = state;
 }
 
-#ifdef CONFIG_SEC_DEBUG
 static unsigned int is_hold_key_hold(void)
 {
 	return hold_key_hold;
@@ -111,7 +110,6 @@ static int is_reaching_count_for_next_step(void)
 {
 	return (check_count == get_count_for_next_step());
 }
-#endif
 
 static int get_count_for_panic(void)
 {
@@ -123,7 +121,6 @@ static int get_count_for_panic(void)
 	return count - 1;
 }
 
-#ifdef CONFIG_SEC_DEBUG
 static unsigned int is_key_state_down(unsigned int code)
 {
 	unsigned long i;
@@ -136,7 +133,6 @@ static unsigned int is_key_state_down(unsigned int code)
 			return tsp_dump_key_states[i].state == KEY_STATE_DOWN;
 	return 0;
 }
-#endif
 
 static void set_key_state_down(unsigned int code)
 {
@@ -188,7 +184,6 @@ static void reset_count(void)
 	check_count = 0;
 }
 
-#ifdef CONFIG_SEC_DEBUG
 static int check_tsp_crash_keys(struct notifier_block *this,
 				unsigned long type, void *data)
 {
@@ -236,15 +231,12 @@ static int check_tsp_crash_keys(struct notifier_block *this,
 static struct notifier_block nb_gpio_keys = {
 	.notifier_call = check_tsp_crash_keys,
 };
-#endif
 
 static int __init sec_tsp_dumpkey_init(void)
 {
 	/* only work for debug level is low */
 //	if (unlikely(!sec_debug_is_enabled()))
-#ifdef CONFIG_SEC_DEBUG
 		sec_kn_register_notifier(&nb_gpio_keys);
-#endif
 	return 0;
 }
 

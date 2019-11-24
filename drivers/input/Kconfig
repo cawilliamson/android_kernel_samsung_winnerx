@@ -232,6 +232,7 @@ config SEC_AUTO_INPUT
 config TOUCHSCREEN_DUMP_MODE
 	bool "touchscreen dump mode"
 	depends on I2C
+	depends on SEC_DEBUG
 	help
 	  Say Y here if you need to get raw data.
 	  
