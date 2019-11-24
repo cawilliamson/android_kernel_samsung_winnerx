@@ -634,9 +634,10 @@ static u32 msg_used_size(u16 text_len, u16 dict_len, u32 *pad_len)
 #define MAX_LOG_TAKE_PART 4
 static const char trunc_msg[] = "<truncated>";
 
-//CONIFG_SEC_DEBUG
+#ifdef CONFIG_SEC_DEBUG
 static bool printk_process =
 	IS_ENABLED(CONFIG_SEC_DEBUG_PRINTK_NOCACHE) ? 1 : 0;
+#endif
 
 static u32 truncate_msg(u16 *text_len, u16 *trunc_msg_len,
 			u16 *dict_len, u32 *pad_len)

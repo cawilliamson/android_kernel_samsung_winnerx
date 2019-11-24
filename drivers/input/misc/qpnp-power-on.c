@@ -1422,9 +1422,8 @@ int qpnp_get_s2_reset_onoff(void)
 EXPORT_SYMBOL(qpnp_get_s2_reset_onoff);
 #endif
 
-#if defined(CONFIG_SEC_PM)
-static int
-qpnp_control_s2_reset(struct qpnp_pon *pon, struct qpnp_pon_config *cfg, int on)
+#if defined(CONFIG_SEC_PM_DEBUG)
+static int qpnp_control_s2_reset(struct qpnp_pon *pon, struct qpnp_pon_config *cfg, int on)
 {
 	int rc;
 	u16 s1_timer_addr = QPNP_PON_KPDPWR_S1_TIMER(pon);
@@ -1443,7 +1442,9 @@ qpnp_control_s2_reset(struct qpnp_pon *pon, struct qpnp_pon_config *cfg, int on)
 
 	return 0;
 }
+#endif
 
+#if defined(CONFIG_SEC_PM)
 int qpnp_set_resin_wk_int(int en)
 {
 	struct qpnp_pon *pon = sys_reset_dev;

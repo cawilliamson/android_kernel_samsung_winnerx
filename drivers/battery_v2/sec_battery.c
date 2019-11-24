@@ -3563,7 +3563,9 @@ void sec_bat_get_battery_info(struct sec_battery_info *battery)
 		battery->current_avg, battery->current_adc);
 #endif
 
+#ifdef CONFIG_SEC_DEBUG
 	battery_last_dcvs(battery->capacity, battery->voltage_avg, battery->temperature, battery->current_avg);
+#endif
 }
 
 static void sec_bat_polling_work(struct work_struct *work)

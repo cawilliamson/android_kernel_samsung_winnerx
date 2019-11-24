@@ -636,7 +636,9 @@ static int dsi_panel_tx_cmd_set(struct dsi_panel *panel,
 	}
 #endif
 	if (count == 0) {
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("No commands for cmd[%d]=%s\n", type, ss_get_cmd_name(type));
+#endif
 		goto error;
 	}
 

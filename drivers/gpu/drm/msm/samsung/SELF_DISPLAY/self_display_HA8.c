@@ -95,7 +95,9 @@ void make_self_dispaly_img_cmds_HA8(struct samsung_display_driver_data *vdd,
 
 		tcmds[i].msg.tx_len = j;
 
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("dlen (%d), data_idx (%d)\n", j, data_idx);
+#endif
 	}
 
 	return;
@@ -877,8 +879,10 @@ static int self_display_aod_enter(struct samsung_display_driver_data *vdd)
 	}
 
 	if (!vdd->self_disp.is_support) {
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("self display is not supported..(%d) \n",
 								vdd->self_disp.is_support);
+#endif
 		return -ENODEV;
 	}
 
@@ -919,8 +923,10 @@ static int self_display_aod_exit(struct samsung_display_driver_data *vdd)
 	}
 
 	if (!vdd->self_disp.is_support) {
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("self display is not supported..(%d) \n",
 								vdd->self_disp.is_support);
+#endif
 		return -ENODEV;
 	}
 
@@ -1162,7 +1168,9 @@ static int self_display_open(struct inode *inode, struct file *file)
 	vdd->self_disp.file_open = 1;
 	file->private_data = vdd;
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("[open]\n");
+#endif
 
 	return 0;
 }
@@ -1178,7 +1186,9 @@ static int self_display_release(struct inode *inode, struct file *file)
 
 	vdd->self_disp.file_open = 0;
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("[release]\n");
+#endif
 
 	return 0;
 }

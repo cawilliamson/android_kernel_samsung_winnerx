@@ -139,7 +139,9 @@ int get_lcd_attached(char *mode)
 {
 	static int lcd_id = -EINVAL;
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("%s", mode);
+#endif
 
 	if (mode == NULL)
 		return true;
@@ -176,7 +178,9 @@ int get_lcd_attached_secondary(char *mode)
 {
 	static int lcd_id = -EINVAL;
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("%s", mode);
+#endif
 
 	if (mode == NULL)
 		return true;
@@ -269,7 +273,9 @@ static void ss_event_frame_update(
 
 		/* Skip a number of frames to avoid garbage image output from wakeup */
 		if (frame_count <= vdd->dtsi_data.samsung_delayed_display_on) {
+#ifdef CONFIG_SEC_DEBUG
 			LCD_DEBUG("Skip %d frame\n", frame_count);
+#endif
 			frame_count++;
 			goto skip_display_on;
 		}
@@ -365,7 +371,9 @@ static void ss_check_te(struct samsung_display_driver_data *vdd)
 		}
 		if (te_count == te_max) {
 			LCD_ERR("LDI doesn't generate TE");
+#ifdef CONFIG_SEC_DEBUG
 			SS_XLOG(0xbad);
+#endif
 			inc_dpui_u32_field(DPUI_KEY_QCT_NO_TE, 1);
 		}
 	} else
@@ -437,7 +445,9 @@ static int _ss_dsi_panel_event_handler(
 			vdd->panel_func.samsung_pba_config(vdd, arg);
 		break;
 	default:
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("unhandled event=%d\n", event);
+#endif
 		break;
 	}
 
@@ -714,9 +724,11 @@ static int ss_parse_dyn_mipi_clk_sel_table(struct device_node *np,
 		table->from[i] = be32_to_cpup(&data[data_offset++]);
 		table->end[i] = be32_to_cpup(&data[data_offset++]);
 		table->target_clk_idx[i] = be32_to_cpup(&data[data_offset++]);
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("%dst : %d %d %d %d %d\n",
 			i, table->rat[i], table->band[i], table->from[i],
 			table->end[i], table->target_clk_idx[i]);
+#endif
 	}
 
 	LCD_INFO("%s tab_size (%d)\n", keystring, table->tab_size);
@@ -744,7 +756,9 @@ int ss_parse_candella_mapping_table(struct device_node *np,
 
 	data = of_get_property(np, keystring, &len);
 	if (!data) {
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("%d, Unable to read table %s ", __LINE__, keystring);
+#endif
 		return -EINVAL;
 	} else
 		LCD_ERR("Success to read table %s\n", keystring);
@@ -805,7 +819,9 @@ int ss_parse_pac_candella_mapping_table(struct device_node *np,
 
 	data = of_get_property(np, keystring, &len);
 	if (!data) {
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("%d, Unable to read table %s ", __LINE__, keystring);
+#endif
 		return -EINVAL;
 	} else
 		LCD_ERR("Success to read table %s\n", keystring);
@@ -879,7 +895,9 @@ int ss_parse_hbm_candella_mapping_table(struct device_node *np,
 
 	data = of_get_property(np, keystring, &len);
 	if (!data) {
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("%d, Unable to read table %s ", __LINE__, keystring);
+#endif
 		return -EINVAL;
 	} else
 		LCD_ERR("Success to read table %s\n", keystring);
@@ -947,7 +965,9 @@ int ss_parse_panel_table(struct device_node *np,
 
 	data = of_get_property(np, keystring, &len);
 	if (!data) {
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("%d, Unable to read table %s\n", __LINE__, keystring);
+#endif
 		return -EINVAL;
 	} else
 		LCD_ERR("Success to read table %s\n", keystring);
@@ -1032,8 +1052,10 @@ int ss_send_cmd(struct samsung_display_driver_data *vdd,
 
 	if (vdd->debug_data->print_cmds)
 		LCD_INFO("Send cmd(%d): %s ++\n", type, ss_get_cmd_name(type));
+#ifdef CONFIG_SEC_DEBUG
 	else
 		LCD_DEBUG("Send cmd(%d): %s ++\n", type, ss_get_cmd_name(type));
+#endif
 
 	/* case 03063186:
 	 * To prevent deadlock between phandle->phandle_lock and panel->panel_lock,
@@ -1059,8 +1081,10 @@ int ss_send_cmd(struct samsung_display_driver_data *vdd,
 
 	if (vdd->debug_data->print_cmds)
 		LCD_INFO("Send cmd(%d): %s --\n", type, ss_get_cmd_name(type));
+#ifdef CONFIG_SEC_DEBUG
 	else
 		LCD_DEBUG("Send cmd(%d): %s --\n", type, ss_get_cmd_name(type));
+#endif
 
 error:
 	if (likely(is_vdd_locked))
@@ -1108,9 +1132,11 @@ static void __ss_set_cpufreq_cpu(struct samsung_display_driver_data *vdd,
 	cpufreq_update_policy(cpu);
 	cpufreq_cpu_put(policy);
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("en=%d, cpu=%d, per=%d, min=%d, org=(%d-%d)\n",
 			enable, cpu, max_percent, policy->user_policy.min,
 			org_min[cpu], org_max[cpu]);
+#endif
 }
 
 void ss_set_max_cpufreq(struct samsung_display_driver_data *vdd,
@@ -1127,7 +1153,9 @@ void ss_set_max_cpufreq(struct samsung_display_driver_data *vdd,
 
 	//return;
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("en=%d, cluster=%d\n", enable, cluster);
+#endif
 	get_online_cpus();
 
 	/* find clusters */
@@ -1393,8 +1421,10 @@ int ss_panel_data_read_no_gpara(struct samsung_display_driver_data *vdd,
 
 	set->cmds[0].msg.rx_buf = temp_buffer;
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("orig_rx_len (%d) , orig_offset (%d) \n", orig_rx_len, orig_offset);
 	LCD_DEBUG("new_rx_len (%d) , new_offset (%d) \n", set->cmds[0].msg.rx_len, set->read_startoffset);
+#endif
 
 	/* RX */
 	ss_send_cmd(vdd, type);
@@ -1482,7 +1512,9 @@ int ss_panel_data_read_gpara(struct samsung_display_driver_data *vdd,
 	if (read_pos_cmd->cmds->msg.tx_len == 3)
 		read_pos_cmd->cmds->msg.tx_buf[2] = rx_addr;
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("orig_rx_len (%d) , orig_offset (%d) loop_limit (%d)\n", orig_rx_len, orig_offset, loop_limit);
+#endif
 
 	for (i = 0; i < loop_limit; i++) {
 		/* gPara */
@@ -1490,7 +1522,9 @@ int ss_panel_data_read_gpara(struct samsung_display_driver_data *vdd,
 		new_rx_len = ((orig_rx_len - new_offset + orig_offset) < RX_SIZE_LIMIT) ?
 						(orig_rx_len - new_offset + orig_offset) : RX_SIZE_LIMIT;
 
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("new_offset (%d) new_rx_len (%d) \n", new_offset, new_rx_len);
+#endif
 
 		ss_send_cmd(vdd, TX_REG_READ_POS);
 
@@ -1503,7 +1537,9 @@ int ss_panel_data_read_gpara(struct samsung_display_driver_data *vdd,
 			*/
 			if (set->cmds[0].msg.tx_len == 2) {
 				set->cmds[0].msg.tx_buf[1] = new_rx_len;
+#ifdef CONFIG_SEC_DEBUG
 				LCD_DEBUG("update address + read_size(%d) \n", new_rx_len);
+#endif
 			}
 		}
 
@@ -1817,6 +1853,7 @@ int ss_panel_on_pre(struct samsung_display_driver_data *vdd)
 
 	/* Read panel status to check panel is ok from bootloader */
 	if (!vdd->read_panel_status_from_lk) {
+#ifdef CONFIG_SEC_DEBUG
 		rddpm = ss_read_rddpm(vdd);
 		rddsm = ss_read_rddsm(vdd);
 		errfg = ss_read_errfg(vdd);
@@ -1824,6 +1861,7 @@ int ss_panel_on_pre(struct samsung_display_driver_data *vdd)
 		ss_read_pps_data(vdd);
 
 		SS_XLOG(rddpm, rddsm, errfg, dsierror);
+#endif
 		LCD_INFO("panel dbg: %x %x %x %x\n", rddpm, rddsm, errfg, dsierror);
 
 		vdd->read_panel_status_from_lk = 1;
@@ -2070,12 +2108,14 @@ int ss_panel_off_pre(struct samsung_display_driver_data *vdd)
 	int ret = 0;
 
 	LCD_INFO("+\n");
+#ifdef CONFIG_SEC_DEBUG
 	rddpm = ss_read_rddpm(vdd);
 	rddsm = ss_read_rddsm(vdd);
 	errfg = ss_read_errfg(vdd);
 	dsierror = ss_read_dsierr(vdd);
 	ss_read_pps_data(vdd);
 	SS_XLOG(rddpm, rddsm, errfg, dsierror);
+#endif
 	LCD_INFO("panel dbg: %x %x %x %x\n", rddpm, rddsm, errfg, dsierror);
 
 	if (ss_is_esd_check_enabled(vdd)) {
@@ -2128,7 +2168,9 @@ int ss_panel_off_post(struct samsung_display_driver_data *vdd)
 	vdd->self_disp.on = false;
 
 	LCD_INFO("-\n");
+#ifdef CONFIG_SEC_DEBUG
 	SS_XLOG(SS_XLOG_FINISH);
+#endif
 
 	return ret;
 }
@@ -2198,7 +2240,9 @@ int ss_backlight_tft_gpio_config(struct samsung_display_driver_data *vdd, int en
 		goto end;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("%s tft backlight gpios\n", enable ? "enable" : "disable");
+#endif
 
 	/*
 	 * The order of backlight_tft_gpio enable/disable
@@ -2213,9 +2257,11 @@ int ss_backlight_tft_gpio_config(struct samsung_display_driver_data *vdd, int en
 	do {
 		if (gpio_is_valid(vdd->dtsi_data.backlight_tft_gpio[i])) {
 			gpio_set_value(vdd->dtsi_data.backlight_tft_gpio[i], enable);
+#ifdef CONFIG_SEC_DEBUG
 			LCD_DEBUG("set backlight tft gpio[%d] to %s\n",
 						 vdd->dtsi_data.backlight_tft_gpio[i],
 						enable ? "high" : "low");
+#endif
 			usleep_range(500, 500);
 		}
 	} while (((i += add_value) < MAX_BACKLIGHT_TFT_GPIO) && (i >= 0));
@@ -2326,8 +2372,10 @@ static void esd_irq_enable(bool enable, bool nosync, void *data)
 
 config_wakeup_source:
 	if (vdd->esd_recovery.is_wakeup_source == is_wakeup_source[vdd->ndx]) {
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("[ESD] IRQs are already irq_wake %s\n",
 				is_wakeup_source[vdd->ndx] ? "enabled" : "disabled");
+#endif
 		goto end;
 	}
 
@@ -2528,7 +2576,9 @@ static void ss_panel_recovery(struct samsung_display_driver_data *vdd)
 		return;
 	}
 	LCD_INFO("Panel Recovery, Trial Count = %d\n", vdd->panel_recovery_cnt++);
+#ifdef CONFIG_SEC_DEBUG
 	SS_XLOG(vdd->panel_recovery_cnt);
+#endif
 	inc_dpui_u32_field(DPUI_KEY_QCT_RCV_CNT, 1);
 
 	esd_irq_enable(false, true, (void *)vdd);
@@ -2565,13 +2615,17 @@ static void ss_event_osc_te_fitting(
 	}
 
 	if (!ss_is_vsync_enabled(vdd)) {
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("vsync handler does not enabled yet\n");
+#endif
 		return;
 	}
 
 	te_info->status |= TE_FITTING_DONE;
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("++\n");
+#endif
 
 	disp_te_gpio = ss_get_te_gpio(vdd);
 
@@ -2601,8 +2655,10 @@ static void ss_event_osc_te_fitting(
 		te_info->status |= TE_CHECK_ENABLE;
 		te_info->te_duration = 0;
 
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("osc_te_fitting _irq : %d\n",
 				gpio_to_irq(disp_te_gpio));
+#endif
 
 		enable_irq(gpio_to_irq(disp_te_gpio));
 		ret = wait_for_completion_timeout(
@@ -2614,8 +2670,10 @@ static void ss_event_osc_te_fitting(
 		for (i = 0; i < te_info->sampling_rate; i++) {
 			te_info->te_duration +=
 				(i != 0 ? (te_info->te_time[i] - te_info->te_time[i-1]) : 0);
+#ifdef CONFIG_SEC_DEBUG
 			LCD_DEBUG("vsync time : %lld, sum : %lld\n",
 					te_info->te_time[i], te_info->te_duration);
+#endif
 		}
 		do_div(te_info->te_duration, te_info->sampling_rate - 1);
 		LCD_INFO("ave vsync time : %lld\n",
@@ -2630,7 +2688,9 @@ static void ss_event_osc_te_fitting(
 		else
 			break;
 	}
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("--\n");
+#endif
 }
 
 static void samsung_te_check_done_work(struct work_struct *work)
@@ -2945,7 +3005,6 @@ static void ss_panel_pbaboot_config(struct device_node *np,
 #endif
 }
 
-
 static void ss_dynamic_mipi_clk_work(struct work_struct *work)
 {
 	struct samsung_display_driver_data *vdd = NULL;
@@ -3121,7 +3180,9 @@ static void ss_panel_parse_dt(struct samsung_display_driver_data *vdd)
 
 	/* Gram Checksum Test */
 	vdd->gct.is_support = of_property_read_bool(np, "samsung,support_gct");
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("vdd->gct.is_support = %d\n", vdd->gct.is_support);
+#endif
 
 	/* POC Driver */
 	vdd->poc_driver.is_support = of_property_read_bool(np, "samsung,support_poc_driver");
@@ -3548,7 +3609,9 @@ int read_line(char *src, char *buf, int *pos, int len)
 {
 	int idx = 0;
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("(%d) ++\n", *pos);
+#endif
 
 	while (*(src + *pos) != 10 && *(src + *pos) != 13) {
 		buf[idx] = *(src + *pos);
@@ -3570,7 +3633,9 @@ int read_line(char *src, char *buf, int *pos, int len)
 	while (*(src + *pos) == 10 || *(src + *pos) == 13)
 		(*pos)++;
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("--\n");
+#endif
 
 	return idx;
 }
@@ -3712,8 +3777,10 @@ int ss_find_reg_offset(int (*reg_list)[2],
 	}
 
 end:
+#ifdef CONFIG_SEC_DEBUG
 	for (i = 0; i < list_size; i++)
 		LCD_DEBUG("offset[%d] : %d\n", i, reg_list[i][1]);
+#endif
 	return 0;
 }
 
@@ -3740,7 +3807,9 @@ static void set_lpm_br_values(struct samsung_display_driver_data *vdd)
 		return;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("table size (%d)\n", table->tab_size);
+#endif
 
 	if (bl_level > table->max_lv)
 		bl_level = table->max_lv;
@@ -3753,7 +3822,9 @@ static void set_lpm_br_values(struct samsung_display_driver_data *vdd)
 		p = (left + right) / 2;
 		from = table->from[p];
 		end = table->end[p];
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("[%d] from(%d) end(%d) / %d\n", p, from, end, bl_level);
+#endif
 
 		if (bl_level >= from && bl_level <= end)
 			break;
@@ -3770,9 +3841,10 @@ static void set_lpm_br_values(struct samsung_display_driver_data *vdd)
 	};
 	vdd->panel_lpm.lpm_bl_level = table->cd[p];
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("%s: (%d)->(%d)\n",
 		__func__, vdd->br.bl_level, vdd->panel_lpm.lpm_bl_level);
-
+#endif
 }
 
 int ss_panel_lpm_power_ctrl(struct samsung_display_driver_data *vdd, int enable)
@@ -3797,7 +3869,9 @@ int ss_panel_lpm_power_ctrl(struct samsung_display_driver_data *vdd, int enable)
 		return -ENODEV;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("%s ++\n", enable == true ? "Enable" : "Disable");
+#endif
 
 	regs = panel->power_info;
 	lpm_pwr = &vdd->panel_lpm.lpm_pwr;
@@ -3850,9 +3924,12 @@ int ss_panel_lpm_power_ctrl(struct samsung_display_driver_data *vdd, int enable)
 					LCD_ERR("ELVSS Regulator Get Fail\n");
 			} else
 				LCD_ERR("No elvss name for lpm power control\n");
+#ifdef CONFIG_SEC_DEBUG
 		} else
 			LCD_DEBUG("enable=%d, previous voltage : %d\n", enable, get_voltage);
-
+#else
+		}
+#endif
 	} else { /* AOD OFF(Exit) */
 		if (get_voltage != target_vreg->min_voltage) {
 			rc = regulator_set_voltage(
@@ -3886,12 +3963,18 @@ int ss_panel_lpm_power_ctrl(struct samsung_display_driver_data *vdd, int enable)
 					LCD_ERR("ELVSS Regulator Get Fail\n");
 			} else
 				LCD_ERR("No elvss name for lpm power control\n");
+#ifdef CONFIG_SEC_DEBUG
 		} else
 			LCD_DEBUG("enable=%d, previous voltage : %d\n", enable, get_voltage);
+#else
+		}
+#endif
 	}
 
 	mutex_unlock(&vdd->panel_lpm.lpm_lock);
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("[Panel LPM] --\n");
+#endif
 
 	return rc;
 }
@@ -4207,7 +4290,9 @@ static void set_normal_br_values(struct samsung_display_driver_data *vdd)
 		return;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("table size (%d)\n", table->tab_size);
+#endif
 
 	if (vdd->br.bl_level > table->max_lv)
 		vdd->br.bl_level = table->max_lv;
@@ -4220,7 +4305,9 @@ static void set_normal_br_values(struct samsung_display_driver_data *vdd)
 		p = (left + right) / 2;
 		from = table->from[p];
 		end = table->end[p];
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("[%d] from(%d) end(%d) / %d\n", p, from, end, vdd->br.bl_level);
+#endif
 
 		if (vdd->br.bl_level >= from && vdd->br.bl_level <= end)
 			break;
@@ -4228,7 +4315,9 @@ static void set_normal_br_values(struct samsung_display_driver_data *vdd)
 			right = p - 1;
 		else
 			left = p + 1;
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("left(%d) right(%d)\n", left, right);
+#endif
 
 		if (loop > table->tab_size) {
 			pr_err("can not find (%d) level in table!\n", vdd->br.bl_level);
@@ -4281,7 +4370,9 @@ static void set_hbm_br_values(struct samsung_display_driver_data *vdd)
 		p = (left + right) / 2;
 		from = table->from[p];
 		end = table->end[p];
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("[%d] from(%d) end(%d) / %d\n", p, from, end, vdd->br.bl_level);
+#endif
 
 		if (vdd->br.bl_level >= from && vdd->br.bl_level <= end)
 			break;
@@ -4289,7 +4380,9 @@ static void set_hbm_br_values(struct samsung_display_driver_data *vdd)
 			right = p - 1;
 		else
 			left = p + 1;
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("left(%d) right(%d)\n", left, right);
+#endif
 
 		if (loop > table->tab_size) {
 			pr_err("can not find (%d) level in table!\n", vdd->br.bl_level);
@@ -4798,7 +4891,9 @@ static void set_hmt_br_values(struct samsung_display_driver_data *vdd)
 		return;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("table size (%d)\n", table->tab_size);
+#endif
 
 	if (vdd->hmt_stat.hmt_bl_level > table->max_lv)
 		vdd->hmt_stat.hmt_bl_level = table->max_lv;
@@ -4810,7 +4905,9 @@ static void set_hmt_br_values(struct samsung_display_driver_data *vdd)
 		p = (left + right) / 2;
 		from = table->from[p];
 		end = table->end[p];
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("[%d] from(%d) end(%d) / %d\n", p, from, end, vdd->hmt_stat.hmt_bl_level);
+#endif
 
 		if (vdd->hmt_stat.hmt_bl_level >= from && vdd->hmt_stat.hmt_bl_level <= end)
 			break;
@@ -4838,7 +4935,9 @@ int ss_hmt_brightenss_packet_set(
 	struct dsi_cmd_desc *packet = NULL;
 	struct dsi_panel_cmd_set *tx_cmd = NULL;
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("++\n");
+#endif
 
 	set_hmt_br_values(vdd);
 
@@ -4892,7 +4991,9 @@ int ss_hmt_brightenss_packet_set(
 		}
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("--\n");
+#endif
 
 	return cmd_cnt;
 }
@@ -4925,8 +5026,12 @@ int ss_brightness_dcs_hmt(struct samsung_display_driver_data *vdd,
 			LCD_INFO("idx(%d), cd_level(%d), hmt_bl_level(%d) itp : %s",
 				vdd->hmt_stat.cmd_idx_hmt, vdd->hmt_stat.candela_level_hmt, vdd->hmt_stat.hmt_bl_level,
 				vdd->panel_br_info.itp_mode == 0 ? "TABLE" : "FLASH'");
+#ifdef CONFIG_SEC_DEBUG
 		} else
 			LCD_DEBUG("single_transmission_fail error\n");
+#else
+		}
+#endif
 	} else
 		LCD_INFO("level : %d skip\n", vdd->br.bl_level);
 
@@ -5110,14 +5215,18 @@ static void ss_brightness_work(struct work_struct *work)
 	br = container_of(work, struct brightness_info, br_work);
 	vdd = container_of(br, struct samsung_display_driver_data, br);
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("brightness work ++\n");
+#endif
 
 	/* notify clients of brightness change */
 	bl_evt_data.bl_level = vdd->br.bl_level;
 	bl_evt_data.aor_data = vdd->br.aor_data;
 	panel_notifier_call_chain(PANEL_EVENT_BL_CHANGED, &bl_evt_data);
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("brightness work --\n");
+#endif
 
 	return;
 }
@@ -5165,11 +5274,13 @@ void ss_panel_init(struct dsi_panel *panel)
 	vdd->msm_private = panel;
 	list_add(&vdd->vdd_list, &vdds_list);
 
+#ifdef CONFIG_SEC_DEBUG
 	if (ss_panel_debug_init(vdd))
 		LCD_ERR("Fail to create debugfs\n");
 
 	if (ss_smmu_debug_init(vdd))
 		LCD_ERR("Fail to create smmu debug\n");
+#endif
 
 	mutex_init(&vdd->vdd_lock);
 	mutex_init(&vdd->cmd_lock);

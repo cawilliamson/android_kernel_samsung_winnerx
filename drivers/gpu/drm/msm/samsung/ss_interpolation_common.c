@@ -153,11 +153,13 @@ static void gen_hbm_interpolation_platform_level_lux_mode(struct samsung_display
 
 			hbm_itp->br_table[index].lux_mode = hbm_itp->br_table[index].interpolation_br_x10000 / MULTIPLY_x10000;
 
+#ifdef CONFIG_SEC_DEBUG
 			LCD_DEBUG("Platform : %3d %7d %7d %4d\n",
 					index,
 					hbm_itp->br_table[index].platform_level_x10000,
 					hbm_itp->br_table[index].interpolation_br_x10000,
 					hbm_itp->br_table[index].lux_mode);
+#endif
 
 			index++;
 		}
@@ -319,7 +321,9 @@ static void init_normal_interpolation(struct samsung_display_driver_data *vdd,
 		}
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("%pk %d\n", ss_itp->normal.br_aor_table, normal_interpolation_step);
+#endif
 }
 
 static unsigned int A_DIMMING_AOR_CAL(
@@ -409,7 +413,9 @@ static void gen_normal_interpolation_platform_level_lux_mode(struct samsung_disp
 
 			normal_itp->br_aor_table[index].lux_mode = normal_table[loop].lux_mode;
 
+#ifdef CONFIG_SEC_DEBUG
 			LCD_DEBUG("Platform : %d %d %d\n", index, normal_itp->br_aor_table[index].platform_level_x10000, normal_itp->br_aor_table[index].lux_mode);
+#endif
 
 			index++;
 		}
@@ -464,7 +470,9 @@ static void gen_normal_interpolation_br(struct samsung_display_driver_data *vdd,
 
 			normal_itp->br_aor_table[index].interpolation_br_x10000 = ROUNDING(result4 +lux_add);
 
+#ifdef CONFIG_SEC_DEBUG
 			LCD_DEBUG("BR : %d %d\n", index, normal_itp->br_aor_table[index].interpolation_br_x10000);
+#endif
 
 			index++;
 		}
@@ -594,10 +602,12 @@ static void gen_normal_interpolation_aor(struct samsung_display_driver_data *vdd
 				aor_size,
 				normal_itp->br_aor_table[index].aor_hex_string);
 
+#ifdef CONFIG_SEC_DEBUG
 			LCD_DEBUG("AOR index : %3d  hex: 0x%04x percent_x10000: %6d mode : %s\n", index,
 				normal_itp->br_aor_table[index].aor_hex,
 				normal_itp->br_aor_table[index].aor_percent_x10000,
 				ss_dimming_mode_debug[dimming_mode_curr]);
+#endif
 
 			index++;
 		}
@@ -754,7 +764,9 @@ static int find_hbm_candela(struct samsung_display_driver_data *vdd)
 	if (index < 0) {
 		for(loop = hbm_brightness_step - 1; loop >= 0; loop--)
 			if (vdd->panel_br_info.hbm.candela_table[loop] - candela >= 0) {
+#ifdef CONFIG_SEC_DEBUG
 				LCD_DEBUG("index : %d lux : %d vdd_lux : %d\n", loop, vdd->panel_br_info.hbm.candela_table[loop], candela);
+#endif
 				index = loop;
 				break;
 			}
@@ -784,7 +796,9 @@ static int find_normal_candela(struct samsung_display_driver_data *vdd)
 	if (index < 0) {
 		for(loop = normal_brightness_step - 1; loop >= 0; loop--)
 			if (vdd->panel_br_info.normal.candela_table[loop] - candela >= 0) {
+#ifdef CONFIG_SEC_DEBUG
 				LCD_DEBUG("index : %d lux : %d vdd_lux : %d\n", loop, vdd->panel_br_info.normal.candela_table[loop], candela);
+#endif
 				index = loop;
 				break;
 			}
@@ -995,7 +1009,9 @@ int br_interpolation_generate_event(struct samsung_display_driver_data *vdd, enu
 		break;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("event=%d candela_index:%d\n", event, candela_index);
+#endif
 
 	return candela_index;
 }

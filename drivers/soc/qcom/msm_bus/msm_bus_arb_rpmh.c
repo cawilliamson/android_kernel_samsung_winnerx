@@ -46,7 +46,9 @@ static LIST_HEAD(commit_list);
 static LIST_HEAD(late_init_clist);
 static LIST_HEAD(query_list);
 
+#ifdef CONFIG_SEC_DEBUG
 extern bool is_dbg_level_low;
+#endif
 
 DEFINE_RT_MUTEX(msm_bus_adhoc_lock);
 
@@ -746,13 +748,17 @@ static void aggregate_bus_req(struct msm_bus_node_device_type *bus_dev,
 
 	bus_dev->node_bw[ctx].sum_ab = sum_ab;
 	bus_dev->node_bw[ctx].max_ib = max_ib;
+#ifdef CONFIG_SEC_DEBUG
 	if(!is_dbg_level_low){ 
+#endif
 		if(bus_dev->node_info->id == MSM_BUS_SLAVE_EBI_CH0){
 			trace_clock_set_rate(bus_dev->node_info->name, max_ib/unit_scail, raw_smp_processor_id());
 		}else if(bus_dev->node_info->id == MSM_BUS_SLAVE_EBI_CH0_DISPLAY){
 			trace_clock_set_rate(bus_dev->node_info->name, max_ib/unit_scail, raw_smp_processor_id());
 		}
+#ifdef CONFIG_SEC_DEBUG
 	}
+#endif
 
 exit_agg_bus_req:
 	return;

@@ -709,7 +709,9 @@ void gen_hbm_interpolation_gamma_S6E3HA9_AMB675TG01(struct samsung_display_drive
 
 	for (step_cnt = 0; step_cnt < hbm_interpolation_step; step_cnt++) {
 		hbm_interpolation_candela[step_cnt] = ss_itp->hbm.br_table[step_cnt].lux_mode;
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("%d candela : %d\n", step_cnt, hbm_interpolation_candela[step_cnt]);
+#endif
 	}
 
 	/* copy & extend V255 BIT8 for (hbm & normal) max gamma*/
@@ -776,11 +778,13 @@ void gen_hbm_interpolation_gamma_S6E3HA9_AMB675TG01(struct samsung_display_drive
 		}
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	for (extend_index = 0, extend_index = 0; extend_index < extension_gamma_size; extend_index++) {
 		LCD_DEBUG("%d 0x%x 0x%x\n", extend_index, extend_hbm_max_gamma[extend_index], extend_normal_max_gamma[extend_index]);
 	}
 
 	LCD_DEBUG("normal_max_candela : %d hbm_max_candela %d\n", normal_max_candela, hbm_max_candela);
+#endif
 
 	for (step_cnt = 0 ; step_cnt < hbm_interpolation_step; step_cnt++) {
 		gen_rate = ((hbm_interpolation_candela[step_cnt] - normal_max_candela) * BIT_SHFIT_MUL) /
@@ -860,7 +864,9 @@ void gen_hbm_interpolation_irc_S6E3HA9_AMB675TG01(struct samsung_display_driver_
 	hbm_interpolation_step = hbm_itp->brightness_step;
 	dest_irc = hbm_itp->irc;
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("hbm_interpolation_step : %d \n", hbm_interpolation_step);
+#endif
 
 	for (loop = 0; loop < hbm_interpolation_step; loop++) {
 		/* copy default irc string */
@@ -889,8 +895,10 @@ void gen_hbm_interpolation_irc_S6E3HA9_AMB675TG01(struct samsung_display_driver_
 
 				dest_irc[loop][reg_idx] = res;
 
+#ifdef CONFIG_SEC_DEBUG
 				LCD_DEBUG("[%d][%d] %x(%d) %d %d %d => %x(%d)\n", loop, reg_idx,
 					irc, irc, cur_br_x10000, normal_max_br, hbm_max_br, dest_irc[loop][reg_idx], dest_irc[loop][reg_idx]);
+#endif
 			}
 		}
 	}
@@ -920,7 +928,9 @@ void gen_normal_interpolation_irc_S6E3HA9_AMB675TG01(struct samsung_display_driv
 	normal_interpolation_step = normal_itp->brightness_step;
 	dest_irc = normal_itp->irc;
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("normal_interpolation_step : %d \n", normal_interpolation_step);
+#endif
 
 	for (loop = 0; loop < normal_interpolation_step; loop++) {
 		/* copy default irc string */
@@ -937,8 +947,10 @@ void gen_normal_interpolation_irc_S6E3HA9_AMB675TG01(struct samsung_display_driv
 
 				dest_irc[loop][reg_idx] = ROUNDING(val1 / MULTIPLY_x100) / MULTIPLY_x100;
 
+#ifdef CONFIG_SEC_DEBUG
 				LCD_DEBUG("[%d][%d] %x(%d) %d %d => %x(%d)\n", loop, reg_idx,
 					irc, irc, cur_br_x10000, normal_max_br, dest_irc[loop][reg_idx], dest_irc[loop][reg_idx]);
+#endif
 			}
 		}
 	}

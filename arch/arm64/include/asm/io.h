@@ -105,12 +105,18 @@ static inline u64 __raw_readq_no_log(const volatile void __iomem *addr)
  * consider why they can't support the logging
  */
 
+#if defined(CONFIG_QCOM_RTB)
+#define etb_waypoint		if (_ret)/* CONFIG_SEC_DEBUG */\
+					ETB_WAYPOINT;
+#else
+#define etb_waypoint
+#endif
+
 #define __raw_write_logged(v, a, _t) ({ \
 	int _ret; \
 	void *_addr = (void *)(a); \
 	_ret = uncached_logk(LOGK_WRITEL, _addr); \
-	if (_ret)/* CONFIG_SEC_DEBUG */\
-		ETB_WAYPOINT; \
+	      etb_waypoint \
 	__raw_write##_t##_no_log((v), _addr); \
 	if (_ret) \
 		LOG_BARRIER; \
@@ -126,8 +132,7 @@ static inline u64 __raw_readq_no_log(const volatile void __iomem *addr)
 	void *_addr = (void *)(a); \
 	int _ret; \
 	_ret = uncached_logk(LOGK_READL, _addr); \
-	if (_ret)/* CONFIG_SEC_DEBUG */\
-		ETB_WAYPOINT; \
+		etb_waypoint \
 	__a = __raw_read##_l##_no_log(_addr); \
 	if (_ret) \
 		LOG_BARRIER; \

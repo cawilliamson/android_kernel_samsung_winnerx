@@ -69,7 +69,9 @@ Copyright (C) 2012, Samsung Electronics. All rights reserved.
 #include "ss_dpui_common.h"
 
 #include "ss_dsi_panel_sysfs.h"
+#ifdef CONFIG_SEC_DEBUG
 #include "ss_dsi_panel_debug.h"
+#endif
 
 #include "ss_ddi_poc_common.h"
 #include "ss_copr_common.h"
@@ -81,12 +83,13 @@ Copyright (C) 2012, Samsung Electronics. All rights reserved.
 
 #if defined(CONFIG_SEC_DEBUG)
 #include <linux/sec_debug.h>
-#endif
 
 extern bool enable_pr_debug;
+#endif
 
 #define LOG_KEYWORD "[SDE]"
 
+#if defined(CONFIG_SEC_DEBUG)
 #define LCD_DEBUG(X, ...)	\
 		do {	\
 			if (enable_pr_debug)	\
@@ -94,6 +97,8 @@ extern bool enable_pr_debug;
 			else	\
 				pr_debug("%s %s : "X, LOG_KEYWORD, __func__, ## __VA_ARGS__);\
 		} while (0)	\
+
+#endif
 
 #define LCD_INFO(X, ...) pr_info("%s %s : "X, LOG_KEYWORD, __func__, ## __VA_ARGS__)
 #define LCD_INFO_ONCE(X, ...) pr_info_once("%s %s : "X, LOG_KEYWORD, __func__, ## __VA_ARGS__)
@@ -1214,8 +1219,10 @@ struct samsung_display_driver_data {
 	/*
 	 *  smmu debug(sde & rotator)
 	 */
+#ifdef CONFIG_SEC_DEBUG
 	struct ss_smmu_debug ss_debug_smmu[SMMU_MAX_DEBUG]; // TODO: use ss_debug_smmu for only primary vdd, not secondary vdd...
 	struct kmem_cache *ss_debug_smmu_cache;
+#endif
 
 	/*
 	 *  SELF DISPLAY

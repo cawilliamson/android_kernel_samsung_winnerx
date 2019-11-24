@@ -529,7 +529,9 @@ int ss_copr_get_roi_opr_2P0(struct samsung_display_driver_data *vdd)
 	struct COPR_CMD cmd_backup;
 	struct COPR_CMD *cur_cmd;
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("++ (%d)\n", vdd->copr.afc_roi_cnt);
+#endif
 
 	/* backup copr current cmd */
 	memcpy(&cmd_backup, &vdd->copr.cur_cmd, sizeof(cmd_backup));
@@ -597,7 +599,9 @@ err:
 	/* restore copr cmd */
 	ss_copr_set_cmd(vdd, &cmd_backup);
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("--\n");
+#endif
 
 	return ret;
 }
@@ -612,7 +616,9 @@ int ss_copr_get_roi_opr_3P0(struct samsung_display_driver_data *vdd)
 	struct COPR_CMD cmd_backup;
 	struct COPR_CMD *cur_cmd;
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("++ (%d)\n", vdd->copr.afc_roi_cnt);
+#endif
 
 	/* backup copr current cmd */
 	memcpy(&cmd_backup, &vdd->copr.cur_cmd, sizeof(cmd_backup));
@@ -636,7 +642,9 @@ int ss_copr_get_roi_opr_3P0(struct samsung_display_driver_data *vdd)
 	/* restore copr cmd */
 	ss_copr_set_cmd(vdd, &cmd_backup);
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("--\n");
+#endif
 
 	return ret;
 }
@@ -672,8 +680,10 @@ void ss_set_copr_sum(struct samsung_display_driver_data *vdd, enum COPR_CD_INDEX
 	vdd->copr.copr_cd[idx].cd_sum += (vdd->br.interpolation_cd * delta);
 	mutex_unlock(&vdd->copr.copr_val_lock);
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("[%d ]cd(%d) delta (%lld) cd_sum (%lld) total_t (%lld)\n", idx,
 			vdd->br.interpolation_cd, delta, vdd->copr.copr_cd[idx].cd_sum, vdd->copr.copr_cd[idx].total_t);
+#endif
 }
 
 /**
@@ -753,9 +763,11 @@ int ss_copr_read(struct samsung_display_driver_data *vdd)
 	int tx_bpw, rx_bpw;
 	int tx_size, rx_size;
 	int ret = 0;
+#ifdef CONFIG_SEC_DEBUG
 	int i;
 
 	LCD_DEBUG("%s ++ \n", __func__);
+#endif
 
 	if (!ss_is_panel_on(vdd)) {
 		LCD_ERR("panel stste (%d) \n", vdd->panel_state);
@@ -787,17 +799,21 @@ int ss_copr_read(struct samsung_display_driver_data *vdd)
 		goto err;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	for (i = 0; i < rx_size; i++)
 		LCD_DEBUG("[%02d] %02x \n", i, rxbuf[i]);
+#endif
 
 	ss_copr_parse_spi_data(vdd, rxbuf);
 
+#ifdef CONFIG_SEC_DEBUG
 	if (vdd->copr.ver == COPR_VER_3P0)
 		LCD_DEBUG("[%d] current_copr (%d), avg_copr (%d) sld_avg (%d) \n",
 			vdd->copr.current_cnt, vdd->copr.current_copr, vdd->copr.avg_copr, vdd->copr.sliding_avg_copr);
 	else
 		LCD_DEBUG("[%d] current_copr (%d), avg_copr (%d) , comp_copr(%d)\n",
 			vdd->copr.current_cnt, vdd->copr.current_copr, vdd->copr.avg_copr, vdd->copr.comp_copr);
+#endif
 
 	/* If current_copr is over 0, copr work thread will be stopped */
 	if (vdd->display_status_dsi.wait_actual_disp_on) {
@@ -805,7 +821,9 @@ int ss_copr_read(struct samsung_display_driver_data *vdd)
 		vdd->display_status_dsi.wait_actual_disp_on = false;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("%s -- data (%d)\n", __func__, vdd->copr.current_copr);
+#endif
 
 err:
 	kfree(rxbuf);
@@ -827,14 +845,18 @@ void ss_read_copr_work(struct work_struct *work)
 	copr = container_of(work, struct COPR, read_copr_work);
 	vdd = container_of(copr, struct samsung_display_driver_data, copr);
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("copr_calc work!!\n");
+#endif
 
 	mutex_lock(&vdd->copr.copr_lock);
 
 	//ss_set_copr_sum(vdd);
 	ss_copr_read(vdd);
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("COPR : %02x (%d) \n", vdd->copr.current_copr, vdd->copr.current_copr);
+#endif
 
 	mutex_unlock(&vdd->copr.copr_lock);
 

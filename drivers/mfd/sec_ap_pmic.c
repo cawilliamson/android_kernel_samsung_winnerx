@@ -18,10 +18,12 @@
 #include <linux/device.h>
 #include <linux/proc_fs.h>
 #include <linux/input/qpnp-power-on.h>
+#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_crashkey.h>
 
 /* for enable/disable manual reset, from retail group's request */
 extern void do_keyboard_notifier(int onoff);
+#endif
 
 static struct device *sec_ap_pmic_dev;
 
@@ -69,7 +71,9 @@ static ssize_t manual_reset_store(struct device *in_dev,
 
 	pr_info("%s: onoff(%d)\n", __func__, onoff);
 
+#ifdef CONFIG_SEC_DEBUG
 	do_keyboard_notifier(onoff);
+#endif
 	qpnp_control_s2_reset_onoff(onoff);
 
 	return len;

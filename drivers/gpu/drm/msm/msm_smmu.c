@@ -276,7 +276,7 @@ static int msm_smmu_map_dma_buf(struct msm_mmu *mmu, struct sg_table *sgt,
 				dir, attrs, client->secure);
 	}
 
-#if defined(CONFIG_DISPLAY_SAMSUNG)
+#if defined(CONFIG_DISPLAY_SAMSUNG) && defined(CONFIG_SEC_DEBUG)
 	if (sec_debug_is_enabled() && sgt && sgt->sgl)
 		ss_smmu_debug_map(SMMU_RT_DISPLAY_DEBUG, 0, NULL, sgt);
 #endif
@@ -303,7 +303,7 @@ static void msm_smmu_unmap_dma_buf(struct msm_mmu *mmu, struct sg_table *sgt,
 				dir, client->secure);
 	}
 
-#if defined(CONFIG_DISPLAY_SAMSUNG)
+#if defined(CONFIG_DISPLAY_SAMSUNG) && defined(CONFIG_SEC_DEBUG)
 	if (sec_debug_is_enabled() && sgt && sgt->sgl)
 		ss_smmu_debug_unmap(SMMU_RT_DISPLAY_DEBUG, sgt);
 #endif
@@ -486,7 +486,7 @@ static int msm_smmu_fault_handler(struct iommu_domain *domain,
 	DRM_ERROR("SMMU device:%s", client->dev ? client->dev->kobj.name : "");
 
 	/* generate dump, but no panic */
-#if defined(CONFIG_DISPLAY_SAMSUNG)
+#if defined(CONFIG_DISPLAY_SAMSUNG) && defined(CONFIG_SEC_DEBUG)
 	ss_smmu_debug_log();
 	SDE_DBG_DUMP("all", "dbg_bus", "vbif_dbg_bus", "panic"); // case 03250922
 #else

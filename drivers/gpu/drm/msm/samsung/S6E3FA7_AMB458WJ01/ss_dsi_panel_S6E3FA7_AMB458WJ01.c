@@ -560,7 +560,9 @@ static int ss_octa_id_read(struct samsung_display_driver_data *vdd)
 
 static struct dsi_panel_cmd_set *ss_aid(struct samsung_display_driver_data *vdd, int *level_key)
 {
+#ifdef CONFIG_SEC_DEBUG
 	int cd_index = 0;
+#endif
 	struct dsi_panel_cmd_set *aid_cmds = ss_get_cmds(vdd, TX_PAC_AID_SUBDIVISION);
 
 	if (IS_ERR_OR_NULL(vdd)) {
@@ -578,10 +580,12 @@ static struct dsi_panel_cmd_set *ss_aid(struct samsung_display_driver_data *vdd,
 	vdd->br.aor_data = (aid_cmds->cmds->msg.tx_buf[1] << 8)
 							| aid_cmds->cmds->msg.tx_buf[2];
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("[%d] level(%d), aid(%x %x)\n",
 			cd_index, vdd->br.bl_level,
 			aid_cmds->cmds->msg.tx_buf[1],
 			aid_cmds->cmds->msg.tx_buf[2]);
+#endif
 
 	*level_key = LEVEL1_KEY;
 
@@ -753,7 +757,9 @@ static struct dsi_panel_cmd_set *ss_gamma(struct samsung_display_driver_data *vd
 		return NULL;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("bl_level : %d candela : %dCD\n", vdd->br.bl_level, vdd->br.cd_level);
+#endif
 
 	*level_key = LEVEL1_KEY;
 
@@ -776,7 +782,9 @@ static struct dsi_panel_cmd_set *ss_gamma_hmt(struct samsung_display_driver_data
 		return NULL;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("hmt_bl_level : %d candela : %dCD\n", vdd->hmt_stat.hmt_bl_level, vdd->hmt_stat.candela_level_hmt);
+#endif
 
 	*level_key = LEVEL1_KEY;
 	br_interpolation_generate_event(vdd, GEN_HMD_GAMMA, &hmt_gamma_cmds->cmds[0].msg.tx_buf[1]);
@@ -906,7 +914,9 @@ static void ss_set_panel_lpm_brightness(struct samsung_display_driver_data *vdd)
 		{ALPM_REG, -EINVAL},
 		{ALPM_CTRL_REG, -EINVAL} };
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("%s++\n", __func__);
+#endif
 
 	cmd_list[0] = ss_get_cmds(vdd, TX_LPM_BL_CMD);
 	cmd_list[1] = ss_get_cmds(vdd, TX_LPM_BL_CMD);
@@ -972,8 +982,10 @@ static void ss_set_panel_lpm_brightness(struct samsung_display_driver_data *vdd)
 		break;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("[Panel LPM]bl_index %d, ctrl_index %d, mode %d\n",
 			 bl_index, ctrl_index, mode);
+#endif
 
 	/*
 	 * Find offset for alpm_reg and alpm_ctrl_reg
@@ -990,9 +1002,11 @@ static void ss_set_panel_lpm_brightness(struct samsung_display_driver_data *vdd)
 				alpm_brightness[bl_index]->cmds[0].msg.tx_buf,
 				sizeof(char) * cmd_list[0]->cmds[reg_list[0][1]].msg.tx_len);
 
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("[Panel LPM] change brightness cmd : %x, %x\n",
 				cmd_list[0]->cmds[reg_list[0][1]].msg.tx_buf[1],
 				alpm_brightness[bl_index]->cmds[0].msg.tx_buf[1]);
+#endif
 	}
 
 	if (reg_list[1][1] != -EINVAL) {
@@ -1002,7 +1016,9 @@ static void ss_set_panel_lpm_brightness(struct samsung_display_driver_data *vdd)
 				alpm_ctrl[ctrl_index]->cmds[0].msg.tx_buf,
 				sizeof(char) * cmd_list[1]->cmds[reg_list[1][1]].msg.tx_len);
 
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("[Panel LPM] update alpm ctrl reg\n");
+#endif
 	}
 
 	//send lpm bl cmd
@@ -1014,8 +1030,9 @@ static void ss_set_panel_lpm_brightness(struct samsung_display_driver_data *vdd)
 				vdd->panel_lpm.lpm_bl_level == LPM_10NIT ? "10NIT" :
 				vdd->panel_lpm.lpm_bl_level == LPM_30NIT ? "30NIT" :
 				vdd->panel_lpm.lpm_bl_level == LPM_60NIT ? "60NIT" : "UNKNOWN");
-
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("%s--\n", __func__);
+#endif
 }
 
 /*
@@ -1134,8 +1151,10 @@ static void ss_update_panel_lpm_ctrl_cmd(struct samsung_display_driver_data *vdd
 		break;
 	}
 
+#ifdef CONFIG_SEC_DEBUG
 	LCD_DEBUG("[Panel LPM] change brightness cmd :%d, %d, %d\n",
 			 bl_index, ctrl_index, mode);
+#endif
 
 	/*
 	 * Find offset for alpm_reg and alpm_ctrl_reg
@@ -1156,9 +1175,11 @@ static void ss_update_panel_lpm_ctrl_cmd(struct samsung_display_driver_data *vdd
 				alpm_brightness[bl_index]->cmds[0].msg.tx_buf,
 				sizeof(char) * cmd_list[0]->cmds[reg_list[0][1]].msg.tx_len);
 
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("[Panel LPM] change brightness cmd : %x, %x\n",
 				cmd_list[0]->cmds[reg_list[0][1]].msg.tx_buf[1],
 				alpm_brightness[bl_index]->cmds[0].msg.tx_buf[1]);
+#endif
 	}
 
 	if (reg_list[1][1] != -EINVAL) {
@@ -1168,7 +1189,9 @@ static void ss_update_panel_lpm_ctrl_cmd(struct samsung_display_driver_data *vdd
 				alpm_ctrl[ctrl_index]->cmds[0].msg.tx_buf,
 				sizeof(char) * cmd_list[1]->cmds[reg_list[1][1]].msg.tx_len);
 
+#ifdef CONFIG_SEC_DEBUG
 		LCD_DEBUG("[Panel LPM] update alpm ctrl reg\n");
+#endif
 	}
 
 	if ((off_reg_list[0][1] != -EINVAL) &&\
