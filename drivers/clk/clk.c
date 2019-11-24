@@ -2211,8 +2211,8 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
 
 #ifdef CONFIG_SEC_DEBUG
 	if(!is_dbg_level_low)
-		trace_clock_set_rate(clk->core->name, rate, raw_smp_processor_id());
 #endif
+		trace_clock_set_rate(clk->core->name, rate, raw_smp_processor_id());
 
 	ret = clk_core_set_rate_nolock(clk->core, rate);
 
