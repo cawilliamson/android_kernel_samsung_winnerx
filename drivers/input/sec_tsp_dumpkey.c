@@ -123,6 +123,7 @@ static int get_count_for_panic(void)
 	return count - 1;
 }
 
+#ifdef CONFIG_SEC_DEBUG
 static unsigned int is_key_state_down(unsigned int code)
 {
 	unsigned long i;
@@ -135,6 +136,7 @@ static unsigned int is_key_state_down(unsigned int code)
 			return tsp_dump_key_states[i].state == KEY_STATE_DOWN;
 	return 0;
 }
+#endif
 
 static void set_key_state_down(unsigned int code)
 {
