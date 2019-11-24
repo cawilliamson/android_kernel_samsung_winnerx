@@ -86,7 +86,6 @@ static int is_key_matched_for_current_step(unsigned int code)
 {
 	return (code == get_current_step_key_code());
 }
-#endif
 
 static int is_crash_keys(unsigned int code)
 {
@@ -97,6 +96,7 @@ static int is_crash_keys(unsigned int code)
 			return 1;
 	return 0;
 }
+#endif
 
 static int get_count_for_next_step(void)
 {
