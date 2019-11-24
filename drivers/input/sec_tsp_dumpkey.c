@@ -71,12 +71,12 @@ static void set_hold_key_hold(int state)
 	hold_key_hold = state;
 }
 
+#ifdef CONFIG_SEC_DEBUG
 static unsigned int is_hold_key_hold(void)
 {
 	return hold_key_hold;
 }
 
-#ifdef CONFIG_SEC_DEBUG
 static unsigned int get_current_step_key_code(void)
 {
 	return tsp_dump_key_combination[check_step].key_code;
