@@ -184,6 +184,7 @@ static void reset_count(void)
 	check_count = 0;
 }
 
+#ifdef CONFIG_SEC_DEBUG
 static int check_tsp_crash_keys(struct notifier_block *this,
 				unsigned long type, void *data)
 {
@@ -228,7 +229,6 @@ static int check_tsp_crash_keys(struct notifier_block *this,
 
 }
 
-#ifdef CONFIG_SEC_DEBUG
 static struct notifier_block nb_gpio_keys = {
 	.notifier_call = check_tsp_crash_keys,
 };
