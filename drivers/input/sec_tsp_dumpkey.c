@@ -96,7 +96,6 @@ static int is_crash_keys(unsigned int code)
 			return 1;
 	return 0;
 }
-#endif
 
 static int get_count_for_next_step(void)
 {
@@ -112,6 +111,7 @@ static int is_reaching_count_for_next_step(void)
 {
 	return (check_count == get_count_for_next_step());
 }
+#endif
 
 static int get_count_for_panic(void)
 {
