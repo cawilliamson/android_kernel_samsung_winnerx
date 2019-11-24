@@ -637,8 +637,6 @@ static const char trunc_msg[] = "<truncated>";
 #ifdef CONFIG_SEC_DEBUG
 static bool printk_process =
 	IS_ENABLED(CONFIG_SEC_DEBUG_PRINTK_NOCACHE) ? 1 : 0;
-#else
-	static bool printk_process = 0;
 #endif
 
 static u32 truncate_msg(u16 *text_len, u16 *trunc_msg_len,
