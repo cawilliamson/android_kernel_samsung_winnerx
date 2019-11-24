@@ -48,6 +48,10 @@ extern int qpnp_control_s2_reset_onoff(int on);
 static int qpnp_control_s2_reset_onoff(int on) { return 0; };
 #endif
 
+#else	
+static inline int sec_debug_register_crash_key(	
+				struct sec_crash_key *crash_key) { };
+
 #endif /* CONFIG_SEC_DEBUG */
 
 #endif /* SEC_CRASHKEY_H */
