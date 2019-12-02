@@ -1,7 +1,3 @@
-config SAMSUNG_DEBUG_DISPLAY
-	bool "Add Samsung Debugging code"
-	default n
-
 config DISPLAY_SAMSUNG
 	depends on DRM_MSM
 	bool "mdss config for samsung product"
