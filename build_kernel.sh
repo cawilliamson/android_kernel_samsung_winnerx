@@ -2,9 +2,9 @@
 
 mkdir -p out
 
-ANDROID_PLATFORM_VERSION="9.0.0"
+ANDROID_VERSION="9.0.0"
 ARCH="arm64"
-export ANDROID_PLATFORM_VERSION ARCH
+export ANDROID_VERSION ARCH
 
 BUILD_CROSS_COMPILE="/opt/aarch64-linux-android-4.9/bin/aarch64-linux-android-"
 KERNEL_LLVM_BIN="/opt/llvm-arm-toolchain-ship/6.0-cfp/bin/clang"
