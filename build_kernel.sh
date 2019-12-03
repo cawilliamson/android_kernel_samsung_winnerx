@@ -2,10 +2,12 @@
 
 mkdir -p out
 
-export ARCH="arm64"
+ANDROID_PLATFORM_VERSION="9.0.0"
+ARCH="arm64"
+export ANDROID_PLATFORM_VERSION ARCH
 
 BUILD_CROSS_COMPILE="/opt/aarch64-linux-android-4.9/bin/aarch64-linux-android-"
-KERNEL_LLVM_BIN="/opt/llvm-arm-toolchain-ship/6.0/bin/clang"
+KERNEL_LLVM_BIN="/opt/llvm-arm-toolchain-ship/6.0-cfp/bin/clang"
 CLANG_TRIPLE="aarch64-linux-gnu-"
 KERNEL_MAKE_ENV="DTC_EXT=$(pwd)/tools/dtc CONFIG_BUILD_ARM64_DT_OVERLAY=y"
 
