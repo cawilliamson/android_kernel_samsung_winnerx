@@ -36,9 +36,13 @@
 #include <linux/cpumask.h>
 #include <uapi/linux/sched/types.h>
 
-#ifdef CONFIG_SEC_DEBUG
+#ifdef CONFIG_SEC_BSP
 #include <linux/sec_bsp.h>
+#endif
+#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
+#endif
+#ifdef CONFIG_SEC_DEBUG_SUMMARY
 #include <linux/sec_debug_summary.h>
 #endif
 

@@ -24,8 +24,10 @@
 #include <linux/dma-mapping.h>
 #include <linux/module.h>
 
-#ifdef CONFIG_SEC_DEBUG_SUMMARY
+#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
+#endif
+#ifdef CONFIG_SEC_DEBUG_SUMMARY
 #include <linux/sec_debug_summary.h>
 #endif
 

@@ -28,8 +28,12 @@
 #include "mhi_qcom.h"
 
 #ifdef CONFIG_SEC_DEBUG_MDM_FILE_INFO
+#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
+#endif
+#ifdef CONFIG_SEC_DEBUG_SUMMARY
 #include <linux/sec_debug_summary.h>
+#endif
 #endif
 
 static u32 mhi_bl_session_id;

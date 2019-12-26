@@ -64,8 +64,10 @@
 #include "internal.h"
 
 #include <linux/sec_bsp.h>
-#ifdef CONFIG_SEC_DEBUG_SUMMARY
+#ifdef CONFIG_SEC_DEBUG
 #include <linux/sec_debug.h>
+#endif
+#ifdef CONFIG_SEC_DEBUG_SUMMARY
 #include <linux/sec_debug_summary.h>
 #endif
 
