@@ -301,7 +301,8 @@ static QDF_STATUS sme_ese_send_beacon_req_scan_results(
 	do {
 		cur_meas_req = NULL;
 		/* memset bcn_rpt_rsp for each iteration */ 
-		qdf_mem_zero(&bcn_rpt_rsp, sizeof(bcn_rpt_rsp));
+		qdf_mem_zero(&bcn_rpt_rsp, sizeof(bcn_rpt_rsp)); 
+		
 		for (i = 0; i < rrm_ctx->eseBcnReqInfo.numBcnReqIe; i++) {
 			if (rrm_ctx->eseBcnReqInfo.bcnReq[i].channel ==
 				channel) {

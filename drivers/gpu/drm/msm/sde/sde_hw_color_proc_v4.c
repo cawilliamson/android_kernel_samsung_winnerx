@@ -299,7 +299,8 @@ void sde_setup_dspp_pccv4(struct sde_hw_dspp *ctx, void *cfg)
 		}
 
 		SDE_REG_WRITE(&ctx->hw, base + PCC_C_OFF, coeffs->c);
-		//RED
+
+		// RED
 		SDE_REG_WRITE(&ctx->hw, base + PCC_R_OFF,
 			i == 0 ? (coeffs->r * kcal_red) / 256 : coeffs->r);
 
