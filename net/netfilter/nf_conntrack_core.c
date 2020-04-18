@@ -57,6 +57,9 @@
 #include <net/netns/hash.h>
 
 #include "nf_internals.h"
+// KNOX NPA - START
+#include <net/ncm.h>
+// KNOX NPA - END
 
 #define NF_CONNTRACK_VERSION	"0.5.0"
 
@@ -327,6 +330,14 @@ clean_from_lists(struct nf_conn *ct)
 static void nf_ct_add_to_dying_list(struct nf_conn *ct)
 {
 	struct ct_pcpu *pcpu;
+
+	// KNOX NPA - START
+	/* Add 'del_timer(&ct->npa_timeout)' if struct nf_conn->timeout is of type struct timer_list; */
+	/* send dying conntrack entry to collect data */
+	if ( (check_ncm_flag()) && (ct != NULL) && (atomic_read(&ct->startFlow)) ) {
+		knox_collect_conntrack_data(ct, NCM_FLOW_TYPE_CLOSE, 10);
+	}
+	// KNOX NPA - END
 
 	/* add this conntrack to the (per cpu) dying list */
 	ct->cpu = smp_processor_id();
@@ -799,10 +810,18 @@ __nf_conntrack_confirm(struct sk_buff *skb)
 	 * REJECT will give spurious warnings here.
 	 */
 
-	/* No external references means no one else could have
-	 * confirmed us.
+	/* Another skb with the same unconfirmed conntrack may
+	 * win the race. This may happen for bridge(br_flood)
+	 * or broadcast/multicast packets do skb_clone with
+	 * unconfirmed conntrack.
 	 */
-	WARN_ON(nf_ct_is_confirmed(ct));
+	if (unlikely(nf_ct_is_confirmed(ct))) {
+		WARN_ON_ONCE(1);
+		nf_conntrack_double_unlock(hash, reply_hash);
+		local_bh_enable();
+		return NF_DROP;
+	}
+
 	pr_debug("Confirming conntrack %pK\n", ct);
 	/* We have to check the DYING flag after unlink to prevent
 	 * a race against nf_ct_get_next_corpse() possibly called from
@@ -905,6 +924,22 @@ nf_conntrack_tuple_taken(const struct nf_conntrack_tuple *tuple,
 		}
 
 		if (nf_ct_key_equal(h, tuple, zone, net)) {
+			/* Tuple is taken already, so caller will need to find
+			 * a new source port to use.
+			 *
+			 * Only exception:
+			 * If the *original tuples* are identical, then both
+			 * conntracks refer to the same flow.
+			 * This is a rare situation, it can occur e.g. when
+			 * more than one UDP packet is sent from same socket
+			 * in different threads.
+			 *
+			 * Let nf_ct_resolve_clash() deal with this later.
+			 */
+			if (nf_ct_tuple_equal(&ignored_conntrack->tuplehash[IP_CT_DIR_ORIGINAL].tuple,
+					      &ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple))
+				continue;
+
 			NF_CT_STAT_INC_ATOMIC(net, found);
 			rcu_read_unlock();
 			return 1;
@@ -1054,7 +1089,15 @@ static void gc_worker(struct work_struct *work)
 				nf_ct_gc_expired(tmp);
 				expired_count++;
 				continue;
+			// KNOX NPA - START
+			} else if ( (tmp != NULL) && (check_ncm_flag()) && (check_intermediate_flag()) && (atomic_read(&tmp->startFlow)) && (atomic_read(&tmp->intermediateFlow)) ) {
+				s32 npa_timeout = tmp->npa_timeout - ((u32)(jiffies));
+				if (npa_timeout <= 0) {
+					tmp->npa_timeout = ((u32)(jiffies)) + (get_intermediate_timeout() * HZ);
+					knox_collect_conntrack_data(tmp, NCM_FLOW_TYPE_INTERMEDIATE, 20);
+				}
 			}
+			// KNOX NPA - END
 
 			if (nf_conntrack_max95 == 0 || gc_worker_skip_ct(tmp))
 				continue;
@@ -1109,6 +1152,11 @@ static void gc_worker(struct work_struct *work)
 	ratio = scanned ? expired_count * 100 / scanned : 0;
 	if (ratio > GC_EVICT_RATIO) {
 		gc_work->next_gc_run = min_interval;
+		// KNOX NPA - START
+		if ( (check_ncm_flag()) && (check_intermediate_flag()) ) {
+			gc_work->next_gc_run = 0;
+		}
+		// KNOX NPA - END
 	} else {
 		unsigned int max = GC_MAX_SCAN_JIFFIES / GC_MAX_BUCKETS_DIV;
 
@@ -1117,6 +1165,11 @@ static void gc_worker(struct work_struct *work)
 		gc_work->next_gc_run += min_interval;
 		if (gc_work->next_gc_run > max)
 			gc_work->next_gc_run = max;
+		// KNOX NPA - START
+		if ( (check_ncm_flag()) && (check_intermediate_flag()) ) {
+			gc_work->next_gc_run = 0;
+		}
+		// KNOX NPA - END
 	}
 
 	next_run = gc_work->next_gc_run;
@@ -1140,6 +1193,9 @@ __nf_conntrack_alloc(struct net *net,
 		     gfp_t gfp, u32 hash)
 {
 	struct nf_conn *ct;
+	// KNOX NPA - START
+	struct timespec open_timespec;
+	// KNOX NPA - END
 
 	/* We don't want any race condition at early drop stage */
 	atomic_inc(&net->ct.count);
@@ -1164,6 +1220,29 @@ __nf_conntrack_alloc(struct net *net,
 		goto out;
 
 	spin_lock_init(&ct->lock);
+
+	// KNOX NPA - START
+	/* initialize the conntrack structure members when memory is allocated */
+	if (ct != NULL) {
+		open_timespec = current_kernel_time();
+		ct->open_time = open_timespec.tv_sec;
+		ct->knox_uid = 0;
+		ct->knox_pid = 0;
+		memset(ct->process_name,'\0',sizeof(ct->process_name));
+		memset(ct->domain_name,'\0',sizeof(ct->domain_name));
+		ct->knox_puid = 0;
+		ct->knox_ppid = 0;
+		memset(ct->parent_process_name,'\0',sizeof(ct->parent_process_name));
+		ct->knox_sent = 0;
+		ct->knox_recv = 0;
+		memset(ct->interface_name,'\0',sizeof(ct->interface_name));
+		atomic_set(&ct->startFlow, 0);
+		/* Use 'ct->npa_timeout = 0' if struct nf_conn->timeout is of type u32;
+		   Use 'setup_timer(&ct->npa_timeout, death_by_timeout_npa, (unsigned long)ct)' if struct nf_conn->timeout is of type struct timer_list; */
+		ct->npa_timeout = 0;
+		atomic_set(&ct->intermediateFlow, 0);
+	}
+	// KNOX NPA - END
 
 	ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple = *orig;
 	ct->tuplehash[IP_CT_DIR_ORIGINAL].hnnode.pprev = NULL;
@@ -1565,7 +1644,7 @@ void __nf_ct_refresh_acct(struct nf_conn *ct,
 #if defined(CONFIG_IP_NF_TARGET_NATTYPE_MODULE)
 	nattype_ref_timer = rcu_dereference(nattype_refresh_timer);
 	if (nattype_ref_timer)
-		nattype_ref_timer(ct->nattype_entry, ct->timeout.expires);
+		nattype_ref_timer(ct->nattype_entry, ct->timeout);
 #endif
 
 acct:

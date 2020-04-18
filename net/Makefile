@@ -15,7 +15,6 @@ obj-$(CONFIG_NET)		+= $(tmp-y)
 obj-$(CONFIG_LLC)		+= llc/
 obj-$(CONFIG_NET)		+= ethernet/ 802/ sched/ netlink/ bpf/
 obj-$(CONFIG_NETFILTER)		+= netfilter/
-obj-$(CONFIG_WIREGUARD) 	+= wireguard/
 obj-$(CONFIG_INET)		+= ipv4/
 obj-$(CONFIG_TLS)		+= tls/
 obj-$(CONFIG_XFRM)		+= xfrm/
@@ -89,3 +88,7 @@ endif
 obj-$(CONFIG_QRTR)		+= qrtr/
 obj-$(CONFIG_NET_NCSI)		+= ncsi/
 obj-$(CONFIG_RMNET_DATA) += rmnet_data/
+obj-$(CONFIG_RMNET_USB) += rmnet_usb/
+# KNOX NPA - START
+obj-$(CONFIG_KNOX_NCM)	+= ncm/
+# KNOX NPA - END

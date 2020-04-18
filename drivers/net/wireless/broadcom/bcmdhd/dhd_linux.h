@@ -24,7 +24,7 @@
  *
  * <<Broadcom-WL-IPTag/Open:>>
  *
- * $Id: dhd_linux.h 799956 2019-01-18 06:42:36Z $
+ * $Id: dhd_linux.h 816392 2019-04-24 14:39:02Z $
  */
 
 /* wifi platform functions for power, interrupt and pre-alloc, either
@@ -216,7 +216,7 @@ typedef struct dhd_tx_lb_pkttag_fr {
 #endif /* DHD_LB */
 
 #ifdef FILTER_IE
-#define FILTER_IE_PATH VENDOR_PATH "/etc/wifi/filter_ie"
+#define FILTER_IE_PATH "/etc/wifi/filter_ie"
 #define FILTER_IE_BUFSZ 1024 /* ioc buffsize for FILTER_IE */
 #define FILE_BLOCK_READ_SIZE 256
 #define WL_FILTER_IE_IOV_HDR_SIZE OFFSETOF(wl_filter_ie_iov_v1_t, tlvs)
@@ -307,9 +307,6 @@ extern char version_info[MAX_VERSION_LEN];
 #endif /* DHD_EXPORT_CNTL_FILE */
 extern uint32 sec_save_wlinfo(char *firm_ver, char *dhd_ver, char *nvram_p, char *clm_ver);
 #endif /* WRITE_WLANINFO */
-#ifdef DHD_OF_SUPPORT
-extern void interrupt_set_cpucore(int set, unsigned int dpc_cpucore, unsigned int primary_cpucore);
-#endif /* DHD_OF_SUPPORT */
 #ifdef LOGTRACE_FROM_FILE
 extern int dhd_logtrace_from_file(dhd_pub_t *dhd);
 #ifdef DHD_EXPORT_CNTL_FILE
