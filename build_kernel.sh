@@ -11,8 +11,24 @@ KERNEL_LLVM_BIN="/opt/qcom-clang-8/bin/clang"
 CLANG_TRIPLE="aarch64-linux-gnu-"
 KERNEL_MAKE_ENV="DTC_EXT=$(pwd)/tools/dtc CONFIG_BUILD_ARM64_DT_OVERLAY=y"
 
-make -C $(pwd) O=$(pwd)/out $KERNEL_MAKE_ENV CFP_CC=$KERNEL_LLVM_BIN CROSS_COMPILE=$BUILD_CROSS_COMPILE REAL_CC=$KERNEL_LLVM_BIN CLANG_TRIPLE=$CLANG_TRIPLE winnerx_eur_open_caliban_defconfig
-make -j$(nproc --all) -C $(pwd) O=$(pwd)/out $KERNEL_MAKE_ENV CFP_CC=$KERNEL_LLVM_BIN CROSS_COMPILE=$BUILD_CROSS_COMPILE REAL_CC=$KERNEL_LLVM_BIN CLANG_TRIPLE=$CLANG_TRIPLE
+make -C $(pwd) \
+  O=$(pwd)/out \
+  $KERNEL_MAKE_ENV \
+  CFP_CC=$KERNEL_LLVM_BIN \
+  CROSS_COMPILE=$BUILD_CROSS_COMPILE \
+  REAL_CC=$KERNEL_LLVM_BIN \
+  CLANG_TRIPLE=$CLANG_TRIPLE \
+  leankernel_defconfig
 
-cp -v out/arch/arm64/boot/Image-dtb $(pwd)/arch/arm64/boot/Image-dtb
+make -j$(nproc --all) -C $(pwd) \
+  O=$(pwd)/out \
+  $KERNEL_MAKE_ENV \
+  CFP_CC=$KERNEL_LLVM_BIN \
+  CROSS_COMPILE=$BUILD_CROSS_COMPILE \
+  REAL_CC=$KERNEL_LLVM_BIN \
+  CLANG_TRIPLE=$CLANG_TRIPLE
+
+cp -v \
+  out/arch/arm64/boot/Image-dtb \
+  $(pwd)/arch/arm64/boot/Image-dtb
 
