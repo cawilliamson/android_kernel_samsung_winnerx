@@ -12,8 +12,6 @@ obj-y += ss_flash_table_data_common.o
 obj-y += ss_dpui_common.o
 obj-y += ss_ddi_poc_common.o
 
-# obj-$(CONFIG_SAMSUNG_DEBUG_DISPLAY) += dlog.o
-
 # TO SUPPORT SPI INTERFACE
 obj-y  += ss_ddi_spi_common.o
 
