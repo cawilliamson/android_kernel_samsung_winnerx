@@ -1078,6 +1078,7 @@ static void gc_worker(struct work_struct *work)
 				nf_ct_gc_expired(tmp);
 				expired_count++;
 				continue;
+			}
 
 			if (nf_conntrack_max95 == 0 || gc_worker_skip_ct(tmp))
 				continue;
